@@ -1,3 +1,5 @@
+[![PyPI version](https://badge.fury.io/py/pyedna.svg)](https://badge.fury.io/py/pyedna)
+
 # PyeDNA
 ### Written by Eric Strong
 
