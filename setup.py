@@ -3,12 +3,12 @@ from distutils.core import setup
 setup(
   name='pyedna',
   packages=['pyedna'],
-  version='0.1',
+  version='0.11',
   description='Python wrapper library for the C++ EzDnaApi',
   author='Eric Strong',
   author_email='dr.eric.strong@gmail.com',
   url='https://github.com/drericstrong/pyedna',
-  download_url='https://github.com/drericstrong/pyedna/tarball/0.1',
+  download_url='https://github.com/drericstrong/pyedna/tarball/0.11',
   keywords=['eDNA', 'data'],
   classifiers=[],
 )
