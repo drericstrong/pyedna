@@ -8,7 +8,7 @@
     :license: Refer to LICENSE.txt for more information.
 """
 
-__version__ = '0.10'
+__version__ = '0.11'
 
 from .ezdna import DoesIDExist, GetRTFull, GetHistAvg, GetHistInterp, GetHistMax, \
                  GetHistMin, GetHistRaw, GetHistSnap, SelectPoint
