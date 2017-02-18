@@ -4,3 +4,4 @@ setup.py
 pyedna\__init__.py
 pyedna\calc_config.py
 pyedna\ezdna.py
+pyedna\serv.py
