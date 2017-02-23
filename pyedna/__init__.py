@@ -8,10 +8,12 @@
     :license: Refer to LICENSE.txt for more information.
 """
 
-__version__ = '0.13'
+__version__ = '0.15'
 
 from .ezdna import DoesIDExist, GetRTFull, GetHistAvg, GetHistInterp, \
                    GetHistMax, GetHistMin, GetHistRaw, GetHistSnap, \
-                   SelectPoint
+                   SelectPoint, GetPoints, GetServices, LoadDll, \
+				   GetTagDescription, GetMultipleTags, SelectPoint \
+				   HistAppendValues, HistUpdateInsertValues
 
 from .calc_config import CalcConfig

@@ -13,6 +13,7 @@
 # Note- all functions are in CamelCase to match the original eDNA function
 # names, even though this does not follow PEP 8.
 
+import re
 import os
 import warnings
 import pandas as pd
@@ -27,8 +28,9 @@ if os.path.isfile(default_location):
     dna_dll = cdll.LoadLibrary(default_location)
 else:
     dna_dll = None
-    raise Exception("ERROR- no eDNA dll detected at " +
-                    "C:\\Program Files (x86)\\eDNA\\EzDnaApi64.dll")
+    warnings.warn("ERROR- no eDNA dll detected at " +
+                  "C:\\Program Files (x86)\\eDNA\\EzDnaApi64.dll" +
+                  " . Please manually load dll using the LoadDll function.")
 
 
 # If the EzDnaApi file is not in the default location, the user must explicitly
@@ -46,6 +48,15 @@ def LoadDll(location):
         dna_dll = cdll.LoadLibrary(location)
     else:
         raise Exception("ERROR- file does not exist at " + location)
+
+
+def _format_str(text):
+    # Only allows a-z, 0-9, ., _, :, /, -, and spaces
+    if type(text) is str:
+        formatted_text = re.sub('[^-._:/\sA-Za-z0-9]+', '', text).strip()
+        return formatted_text
+    else:
+        return text
 
 
 def _GetNextHist(pulKey, nRet, tag_name, high_speed=False):
@@ -80,6 +91,17 @@ def _GetNextHist(pulKey, nRet, tag_name, high_speed=False):
     df.index = pd.to_datetime(df.index)
     return df
 
+
+def _GetLabel(tag_name):
+    # This function tries to get the tag description to use as the label for
+    # the variable in the pandas DataFrame. It removes any special characters
+    # and trims whitespace before and after. If the label is blank, the
+    # tag name will be returned again instead.
+    label = GetTagDescription(tag_name)
+    if label:
+        return label
+    else:
+        return tag_name
 
 def DoesIDExist(tag_name):
     """
@@ -119,34 +141,36 @@ def GetServices():
     nSvcName, nSvcDesc = c_ushort(30), c_ushort(90)
     nSvcType, nSvcStat = c_ushort(30), c_ushort(30)
 
-    # Call the eDNA function. nRet is zero if the function is successful
+    # Call the eDNA function. nRet is zero if the function is successful.
     nRet = dna_dll.DnaGetServiceEntry(szType, szStartSvcName, byref(pulKey),
         byref(szSvcName), nSvcName, byref(szSvcDesc), nSvcDesc,
         byref(szSvcType), nSvcType, byref(szSvcStat), nSvcStat)
 
     # Iterate across all the returned services
-    service_results = []
+    services = []
     while nRet == 0:
         nRet = dna_dll.DnaGetNextServiceEntry(pulKey,
             byref(szSvcName2), nSvcName, byref(szSvcDesc2), nSvcDesc,
             byref(szSvcType2), nSvcType, byref(szSvcStat2), nSvcStat)
-        # Check that the service returned was not an empty string
-        if szSvcName2.value.strip():
-            # Remember to decode all of the returned string values
-            service_results.append([szSvcName2.value.decode('utf-8').strip(),
-                                    szSvcDesc2.value.decode('utf-8').strip(),
-                                    szSvcType2.value.decode('utf-8').strip(),
-                                    szSvcStat2.value.decode('utf-8').strip()])
+        # We want to ensure only UTF-8 characters are returned. Ignoring
+        # characters is slightly unsafe, but they should only occur in the
+        # units or description, so it's not a huge issue.
+        name = _format_str(szSvcName2.value.decode(errors='ignore'))
+        desc = _format_str(szSvcDesc2.value.decode(errors='ignore'))
+        type_ = _format_str(szSvcType2.value.decode(errors='ignore'))
+        status = _format_str(szSvcStat2.value.decode(errors='ignore'))
+        if name:
+            services.append([name, desc, type_, status])
 
     # If no results were returned, raise a warning
-    if service_results:
-        df = pd.DataFrame(service_results, columns=["Name", "Description",
-                                                    "Type", "Status"])
-        return df
+    df = pd.DataFrame()
+    if services:
+        df = pd.DataFrame(services, columns=["Name", "Description", "Type",
+                                             "Status"])
     else:
         warnings.warn("WARNING- No connected eDNA services detected. Check " +
                       "your DNASys.ini file and your network connection.")
-        return pd.DataFrame()
+    return df
 
 
 def GetPoints(edna_service):
@@ -157,54 +181,51 @@ def GetPoints(edna_service):
     :return: A pandas DataFrame of points in the form [Tag, Value, Time,
         Description, Units]
     """
-    # Ensure that the service exists
-    # service_list = GetServices()
-    # if not service_list.empty:
-    #     if service_list["Name"].isin()
-
     # Define all required variables in the correct ctypes format
     szServiceName = c_char_p(edna_service.encode('utf-8'))
     nStarting, pulKey, pdValue = c_ushort(0), c_ulong(0), c_double(-9999)
-    szPoint, szTime = create_string_buffer(20), create_string_buffer(20)
-    szStatus, szDesc = create_string_buffer(20), create_string_buffer(20)
+    szPoint, szTime = create_string_buffer(30), create_string_buffer(30)
+    szStatus, szDesc = create_string_buffer(20), create_string_buffer(90)
     szUnits = create_string_buffer(20)
-    szPoint2, szTime2 = create_string_buffer(20), create_string_buffer(20)
-    szStatus2, szDesc2 = create_string_buffer(20), create_string_buffer(20)
+    szPoint2, szTime2 = create_string_buffer(30), create_string_buffer(30)
+    szStatus2, szDesc2 = create_string_buffer(20), create_string_buffer(90)
     szUnits2, pdValue2 = create_string_buffer(20), c_double(-9999)
-    nPoint, nTime, nStatus = c_ushort(20), c_ushort(20), c_ushort(20)
-    nDesc, nUnits = c_ushort(20), c_ushort(20)
+    nPoint, nTime, nStatus = c_ushort(30), c_ushort(30), c_ushort(20)
+    nDesc, nUnits = c_ushort(90), c_ushort(20)
 
-    # Call the eDNA function. nRet is zero if the function is successful
+    # Call the eDNA function. nRet is zero if the function is successful.
     nRet = dna_dll.DnaGetPointEntry(szServiceName, nStarting, byref(pulKey),
         byref(szPoint), nPoint, byref(pdValue), byref(szTime), nTime,
         byref(szStatus), nStatus, byref(szDesc), nDesc, byref(szUnits), nUnits)
 
     # Iterate across all the returned services
-    point_results = []
+    points = []
     while nRet == 0:
         nRet = dna_dll.DnaGetNextPointEntry(pulKey,
             byref(szPoint2), nPoint, byref(pdValue2), byref(szTime2), nTime,
             byref(szStatus2), nStatus, byref(szDesc2), nDesc,
             byref(szUnits2), nUnits)
-        # Check that the point returned was not an empty string
+        # We want to ensure only UTF-8 characters are returned. Ignoring
+        # characters is slightly unsafe, but they should only occur in the
+        # units or description, so it's not a huge issue.
+        tag = _format_str(szPoint2.value.decode(errors='ignore'))
+        value = pdValue.value
+        time_ = _format_str(szTime2.value.decode(errors='ignore'))
+        status = _format_str(szStatus2.value.decode(errors='ignore'))
+        desc = _format_str(szDesc2.value.decode(errors='ignore'))
+        units = _format_str(szUnits2.value.decode(errors='ignore'))
         if szPoint2.value.strip():
-            # Remember to decode all of the returned string values
-            point_results.append([szPoint2.value.decode('utf-8').strip(),
-                                  pdValue.value,
-                                  szTime2.value.decode('utf-8').strip(),
-                                  szStatus2.value.decode('utf-8').strip(),
-                                  szDesc2.value.decode('utf-8').strip(),
-                                  szUnits2.value.decode('utf-8').strip()])
+            points.append([tag, value, time_, status, desc, units])
 
     # If no results were returned, raise a warning
-    if point_results:
-        df = pd.DataFrame(point_results, columns=["Tag", "Value",
-            "Time", "Status", "Description", "Units"])
-        return df
+    df = pd.DataFrame()
+    if points:
+        df = pd.DataFrame(points, columns=["Tag", "Value", "Time", "Status",
+                                           "Description", "Units"])
     else:
         warnings.warn("WARNING- No points were returned. Check that the " +
                       "service exists and contains points.")
-        return pd.DataFrame()
+    return df
 
 
 def GetTagDescription(tag_name):
@@ -215,11 +236,31 @@ def GetTagDescription(tag_name):
     :param tag_name: fully-qualified (site.service.tag) eDNA tag
     :return: tag description
     """
-    results = GetRTFull(tag_name)
-    # Ensure that results were actually returned
-    if results:
-        return results[4]
+    # Check if the point even exists
+    if not DoesIDExist(tag_name):
+        warnings.warn("WARNING- " + tag_name + " does not exist or " +
+                      "connection was dropped. Try again if tag does exist.")
+        return None
+
+    # To get the point information for the service, we need the Site.Service
+    split_tag = tag_name.split(".")
+    # If the full Site.Service.Tag was not supplied, return the tag_name
+    if len(split_tag) < 3:
+        warnings.warn("WARNING- Please supply the full Site.Service.Tag.")
+        return tag_name
+    # The Site.Service will be the first two split strings
+    site_service = split_tag[0] + "." + split_tag[1]
+
+    # GetPoints will return a DataFrame with point information
+    points = GetPoints(site_service)
+    if tag_name in points.Tag.values:
+        description = points[points.Tag == tag_name].Description.values[0]
+        if description:
+            return description
+        else:
+            return tag_name
     else:
+        warnings.warn("WARNING- " + tag_name + " not found in service.")
         return None
 
 
@@ -267,7 +308,8 @@ def GetRTFull(tag_name):
         return None
 
 
-def GetHistAvg(tag_name, start_time, end_time, period):
+def GetHistAvg(tag_name, start_time, end_time, period,
+               desc_as_label=False, label=None):
     """
     Retrieves data from eDNA history for a given tag. The data will be
     averaged over the specified "period".
@@ -276,6 +318,9 @@ def GetHistAvg(tag_name, start_time, end_time, period):
     :param start_time: must be in format mm/dd/yy hh:mm:ss
     :param end_time: must be in format mm/dd/yy hh:mm:ss
     :param period: must be in format hh:mm:ss
+    :param desc_as_label: use the tag description as the column name instead
+        of the full tag
+    :param label: supply a custom label to use as the DataFrame column name
     :return: a pandas DataFrame with timestamp, value, and status
 
     Example:
@@ -309,10 +354,20 @@ def GetHistAvg(tag_name, start_time, end_time, period):
                       'not later than the end time, verify that the ' +
                       'DateTime formatting matches eDNA requirements, and ' +
                       'check that data exists in the query time period.')
+
+    # Check if the user would rather use the description as the column name
+    if desc_as_label or label:
+        if label:
+            new_label = label
+        else:
+            new_label = _GetLabel(tag_name)
+        df.rename(inplace=True, columns={tag_name: new_label,
+                tag_name + " Status": new_label + " Status"})
     return df
 
 
-def GetHistInterp(tag_name, start_time, end_time, period):
+def GetHistInterp(tag_name, start_time, end_time, period,
+                  desc_as_label=False, label=None):
     """
     Retrieves data from eDNA history for a given tag. The data will be
     linearly interpolated over the specified "period".
@@ -321,6 +376,9 @@ def GetHistInterp(tag_name, start_time, end_time, period):
     :param start_time: must be in format mm/dd/yy hh:mm:ss
     :param end_time: must be in format mm/dd/yy hh:mm:ss
     :param period: must be in format hh:mm:ss
+    :param desc_as_label: use the tag description as the column name instead
+        of the full tag
+    :param label: supply a custom label to use as the DataFrame column name
     :return: a pandas DataFrame with timestamp, value, and status
 
     Example:
@@ -354,10 +412,20 @@ def GetHistInterp(tag_name, start_time, end_time, period):
                       'not later than the end time, verify that the ' +
                       'DateTime formatting matches eDNA requirements, and ' +
                       'check that data exists in the query time period.')
+
+    # Check if the user would rather use the description as the column name
+    if desc_as_label or label:
+        if label:
+            new_label = label
+        else:
+            new_label = _GetLabel(tag_name)
+        df.rename(inplace=True, columns={tag_name: new_label,
+                tag_name + " Status": new_label + " Status"})
     return df
 
 
-def GetHistMax(tag_name, start_time, end_time, period):
+def GetHistMax(tag_name, start_time, end_time, period,
+               desc_as_label=False, label=None):
     """
     Retrieves data from eDNA history for a given tag. The maximum of the data
     will be found over the specified "period".
@@ -366,6 +434,9 @@ def GetHistMax(tag_name, start_time, end_time, period):
     :param start_time: must be in format mm/dd/yy hh:mm:ss
     :param end_time: must be in format mm/dd/yy hh:mm:ss
     :param period: must be in format hh:mm:ss
+    :param desc_as_label: use the tag description as the column name instead
+        of the full tag
+    :param label: supply a custom label to use as the DataFrame column name
     :return: a pandas DataFrame with timestamp, value, and status
 
     Example:
@@ -399,10 +470,20 @@ def GetHistMax(tag_name, start_time, end_time, period):
                       'not later than the end time, verify that the ' +
                       'DateTime formatting matches eDNA requirements, and ' +
                       'check that data exists in the query time period.')
+
+    # Check if the user would rather use the description as the column name
+    if desc_as_label or label:
+        if label:
+            new_label = label
+        else:
+            new_label = _GetLabel(tag_name)
+        df.rename(inplace=True, columns={tag_name: new_label,
+                tag_name + " Status": new_label + " Status"})
     return df
 
 
-def GetHistMin(tag_name, start_time, end_time, period):
+def GetHistMin(tag_name, start_time, end_time, period,
+               desc_as_label=False, label=None):
     """
     Retrieves data from eDNA history for a given tag. The minimum of the data
     will be found over the specified "period".
@@ -411,6 +492,9 @@ def GetHistMin(tag_name, start_time, end_time, period):
     :param start_time: must be in format mm/dd/yy hh:mm:ss
     :param end_time: must be in format mm/dd/yy hh:mm:ss
     :param period: must be in format hh:mm:ss
+    :param desc_as_label: use the tag description as the column name instead
+        of the full tag
+    :param label: supply a custom label to use as the DataFrame column name
     :return: a pandas DataFrame with timestamp, value, and status
 
     Example:
@@ -444,11 +528,20 @@ def GetHistMin(tag_name, start_time, end_time, period):
                       'not later than the end time, verify that the ' +
                       'DateTime formatting matches eDNA requirements, and ' +
                       'check that data exists in the query time period.')
+
+    # Check if the user would rather use the description as the column name
+    if desc_as_label or label:
+        if label:
+            new_label = label
+        else:
+            new_label = _GetLabel(tag_name)
+        df.rename(inplace=True, columns={tag_name: new_label,
+                tag_name + " Status": new_label + " Status"})
     return df
 
 
 def GetMultipleTags(tag_list, start_time, end_time, sampling_rate=None,
-                    fill_limit=60, verify_time=False):
+                    fill_limit=99999, verify_time=False, desc_as_label=False):
     """
     Retrieves raw data from eDNA history for multiple tags, merging them into
     a single DataFrame, and resampling the data according to the specified
@@ -460,19 +553,35 @@ def GetMultipleTags(tag_list, start_time, end_time, sampling_rate=None,
     :param sampling_rate: in units of seconds
     :param fill_limit: in units of data points
     :param verify_time: verify that the time is not before or after the query
+    :param desc_as_label: use the tag description as the column name instead
+        of the full tag
     :return: a pandas DataFrame with timestamp and values
     """
     # Since we are pulling data from multiple tags, let's iterate over each
     # one. For this case, we only want to pull data using the "raw" method,
     # which will obtain all data as it is actually stored in the historian.
-    # We will be resampling and forward-filling the data, so other retrieval
-    # methods do not even apply.
     dfs = []
+    columns_names = []
     for tag in tag_list:
         df = GetHistRaw(tag, start_time, end_time)
         if not df.empty:
+            # Sometimes a duplicate index/value pair is retrieved from
+            # eDNA, which will cause the concat to fail if not removed
             df.drop_duplicates(inplace=True)
-            dfs.append(pd.DataFrame(df[tag]))
+            # If the user wants to use descriptions as labels, we need to
+            # ensure that only unique labels are used
+            label = tag
+            if desc_as_label:
+                orig_label = _GetLabel(tag)
+                label = orig_label
+                rename_number = 2
+                while label in columns_names:
+                    label = orig_label + str(rename_number)
+                    rename_number += 1
+                columns_names.append(label)
+                df.rename(columns={tag: label}, inplace=True)
+            # Add the DataFrame to the list, to be concatenated later
+            dfs.append(pd.DataFrame(df[label]))
 
     # Next, we concatenate all the DataFrames using an outer join (default).
     # Verify integrity is slow, but it ensures that the concatenation
@@ -505,7 +614,8 @@ def GetMultipleTags(tag_list, start_time, end_time, sampling_rate=None,
     return merged_df
 
 
-def GetHistRaw(tag_name, start_time, end_time, high_speed=False):
+def GetHistRaw(tag_name, start_time, end_time, high_speed=False,
+               desc_as_label=False, label=None):
     """
     Retrieves raw data from eDNA history for a given tag.
 
@@ -513,6 +623,9 @@ def GetHistRaw(tag_name, start_time, end_time, high_speed=False):
     :param start_time: must be in format mm/dd/yy hh:mm:ss
     :param end_time: must be in format mm/dd/yy hh:mm:ss
     :param high_speed: true = pull milliseconds
+    :param desc_as_label: use the tag description as the column name instead
+        of the full tag
+    :param label: supply a custom label to use as the DataFrame column name
     :return: a pandas DataFrame with timestamp, value, and status
 
     Example:
@@ -547,10 +660,20 @@ def GetHistRaw(tag_name, start_time, end_time, high_speed=False):
                       'not later than the end time, verify that the ' +
                       'DateTime formatting matches eDNA requirements, and ' +
                       'check that data exists in the query time period.')
+
+    # Check if the user would rather use the description as the column name
+    if desc_as_label or label:
+        if label:
+            new_label = label
+        else:
+            new_label = _GetLabel(tag_name)
+        df.rename(inplace=True, columns={tag_name: new_label,
+                tag_name + " Status": new_label + " Status"})
     return df
 
 
-def GetHistSnap(tag_name, start_time, end_time, period):
+def GetHistSnap(tag_name, start_time, end_time, period,
+                desc_as_label=False, label=None):
     """
     Retrieves data from eDNA history for a given tag. The data will be
     snapped to the last known value over intervals of the specified "period".
@@ -559,6 +682,9 @@ def GetHistSnap(tag_name, start_time, end_time, period):
     :param start_time: must be in format mm/dd/yy hh:mm:ss
     :param end_time: must be in format mm/dd/yy hh:mm:ss
     :param period: must be in format hh:mm:ss
+    :param desc_as_label: use the tag description as the column name instead
+        of the full tag
+    :param label: supply a custom label to use as the DataFrame column name
     :return: a pandas DataFrame with timestamp, value, and status
 
     Example:
@@ -591,6 +717,15 @@ def GetHistSnap(tag_name, start_time, end_time, period):
                       'not later than the end time, verify that the ' +
                       'DateTime formatting matches eDNA requirements, and ' +
                       'check that data exists in the query time period.')
+
+    # Check if the user would rather use the description as the column name
+    if desc_as_label or label:
+        if label:
+            new_label = label
+        else:
+            new_label = _GetLabel(tag_name)
+        df.rename(inplace=True, columns={tag_name: new_label,
+                tag_name + " Status": new_label + " Status"})
     return df
 
 
@@ -704,5 +839,5 @@ service_array = GetServices()
 if not service_array.empty:
     num_services = str(len(service_array))
     print("Successfully connected to " + num_services + " eDNA services.")
-# Cleanup the unncessary variables
+# Cleanup the unnecessary variables
 del(service_array, num_services, default_location)

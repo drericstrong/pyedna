@@ -10,19 +10,22 @@
 """
 
 import os
-
+import warnings
+import pyedna.ezdna as dna
 from ctypes import cdll, byref, create_string_buffer
 from ctypes import c_char_p, c_double, c_short, c_ushort, c_long, c_int
 
 # This code should execute at the beginning of the module import, because
 # all of the functions in this module require the dna_dll library to be
-# loaded. If the file is not in the default location, the user must explicitly
-# load it using the LoadDll function.
-default_location = "C:\\Program Files (x86)\\eDNA\\EZDnaServApi64.dll"
+# loaded. See "LoadDll" if not in default location
+default_location = "C:\\Program Files (x86)\\eDNA\\EzDnaApi64.dll"
 if os.path.isfile(default_location):
     dnaserv_dll = cdll.LoadLibrary(default_location)
 else:
     dnaserv_dll = None
+    warnings.warn("ERROR- no eDNA dll detected at " +
+                  "C:\\Program Files (x86)\\eDNA\\EzDnaApi64.dll" +
+                  " . Please manually load dll using the LoadDll function.")
 
 
 def LoadDll(location):
@@ -31,16 +34,18 @@ def LoadDll(location):
     (C:\Program Files (x86)\eDNA\EZDnaServApi64.dll) then the user must specify
     the correct location of the file, before this module can be used.
 
-    :param location: the full location of EZDnaServApi64.dll, including filename
+    :param location: full location of EZDnaServApi64.dll, including filename
     """
-    global dnaserv_dll
-    dnaserv_dll = cdll.LoadLibrary(location)
+    if os.path.isfile(location):
+        global dnaserv_dll
+        dnaserv_dll = cdll.LoadLibrary(location)
+    else:
+        raise Exception("ERROR- file does not exist at " + location)
+
 
 def AddAnalogShortIdRecord(site_service, tag, time_value, value,
-                           low_warn=False, high_warn=False,
-                           low_alarm=False, high_alarm=False,
-                           oor_low=False, oor_high=False,
-                           unreliable=False, manual=False):
+    low_warn=False, high_warn=False, low_alarm=False, high_alarm=False,
+    oor_low=False, oor_high=False, unreliable=False, manual=False):
     """
     This function will add an analog value to the specified eDNA service and
     tag, with many optional status definitions.
@@ -107,9 +112,8 @@ def AddAnalogShortIdRecordNoStatus(site_service, tag, time_value, value):
 
 
 def AddDigitalShortIdRecord(site_service, tag, time_value, value,
-                            status_string="OK              ",
-                            warn=False, chattering=False,
-                            unreliable=False, manual=False):
+    status_string="OK              ", warn=False, chattering=False,
+    unreliable=False, manual=False):
     """
     This function will add a digital value to the specified eDNA service and
     tag, including all default point status definitions.
@@ -146,10 +150,8 @@ def AddDigitalShortIdRecord(site_service, tag, time_value, value,
 
 
 def AddAnalogShortIdMsecRecord(site_service, tag, time_value, msec, value,
-                               low_warn=False, high_warn=False,
-                               low_alarm=False, high_alarm=False,
-                               oor_low=False, oor_high=False,
-                               unreliable=False, manual=False):
+    low_warn=False, high_warn=False, low_alarm=False, high_alarm=False,
+    oor_low=False, oor_high=False, unreliable=False, manual=False):
     """
     This function will add an analog value to the specified eDNA service and
     tag, with many optional status definitions.
@@ -221,9 +223,8 @@ def AddAnalogShortIdMsecRecordNoStatus(site_service, tag, time_value, msec,
 
 
 def AddDigitalShortIdMsecRecord(site_service, tag, time_value, msec,
-                                value, status_string="OK              ",
-                                warn=False, chattering=False,
-                                unreliable=False, manual=False):
+    value, status_string="OK              ", warn=False, chattering=False,
+    unreliable=False, manual=False):
     """
     This function will add a digital value to the specified eDNA service and
     tag, including all default point status definitions.
@@ -277,4 +278,11 @@ def FlushShortIdRecords(site_service):
                                               nMessage)
     return str(nRet) + szMessage.value.decode('utf-8')
 
-
+# At the end of the module, we need to check that at least one eDNA service
+# is connected. Otherwise, there is a problem with the eDNA connection.
+service_array = dna.GetServices()
+if not service_array.empty:
+    num_services = str(len(service_array))
+    print("Successfully connected to " + num_services + " eDNA services.")
+# Cleanup the unnecessary variables
+del(service_array, num_services, default_location)
