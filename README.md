@@ -1,4 +1,6 @@
 # PyeDNA
+[![PyPI version](https://badge.fury.io/py/pyedna.svg)](https://badge.fury.io/py/pyedna)
+[![Documentation Status](https://readthedocs.org/projects/pyedna/badge/?version=latest)](http://pyedna.readthedocs.io/en/latest/?badge=latest)
 PyeDNA ("pie-dee-en-ay") is a Python wrapper library for the C++ EzDnaApi,
 written for data scientists who wish to work with eDNA data in the context of a
 pandas DataFrame. By converting eDNA data into a DataFrame, data analysis can 
@@ -19,6 +21,9 @@ located in the following directory:
 C:\Program Files (x86)\eDNA\EzDnaApi64.dll
 
 Required libraries: numba, numpy, pandas
+
+## Documentation
+Current documentation can be found [here](https://pyedna.readthedocs.io/en/latest/).
 
 ## Examples
 All of the core data pulling functions are located in the GetHist function, 
