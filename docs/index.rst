@@ -10,7 +10,7 @@ PyeDNA (“pie-dee-en-ay”) is a Python wrapper library for the C++ EzDnaApi, w
 .. toctree::
    :maxdepth: 2
 
-   readme
+   gettingstarted
    changelog
    
 

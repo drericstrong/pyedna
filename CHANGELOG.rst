@@ -1,5 +1,9 @@
+==============
+ 2. Changelog
+==============
+
 Version 0.14
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+------------
 - FEATURE- GetServices allows you to get all connected eDNA service information
 - FEATURE- GetPoints allows you to get information about all points in a service
 - FEATURE- Number of connected services are printed when library is imported
@@ -8,7 +12,7 @@ Version 0.14
 - GetMultipleTags no longer automatically resamples and forward-fills data. The user should be in control of this.
 
 Version 0.15
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+------------
 - FEATURE- In the pulling functions, you can now use the desc_as_label parameter to use the point description as the DataFrame column name.
 - FEATURE- In the pulling functions, you can now specify a custom column label.
 - Better handling of non-ASCII characters in descriptions and units
@@ -19,7 +23,7 @@ Version 0.15
 - Miscellaneous code cleanup
 
 Version 0.16
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+------------
 - MAJOR- Refactoring of all GetHistX methods into GetHist. Please use the "mode" parameter to specify the type of history call. Old methods still available.
 - New DEPENDENCY- Numba
 - Significant speed increase due to JIT compilation

@@ -1,6 +1,6 @@
-========
- PyeDNA
-========
+====================
+ 1. Getting Started
+====================
 PyeDNA ("pie-dee-en-ay") is a Python wrapper library for the C++ EzDnaApi,
 written for data scientists who wish to work with eDNA data in the context of a
 pandas DataFrame. By converting eDNA data into a DataFrame, data analysis can 
