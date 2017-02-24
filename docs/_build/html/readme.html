@@ -1,0 +1,254 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>PyeDNA &mdash; PyeDNA 0.16 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="PyeDNA 0.16 documentation" href="index.html"/>
+        <link rel="next" title="Version 0.14" href="changelog.html"/>
+        <link rel="prev" title="PyeDNA" href="index.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> PyeDNA
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.16
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="">PyeDNA</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#disclaimer">Disclaimer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#dependencies">Dependencies</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#examples">Examples</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="changelog.html">Version 0.14</a></li>
+<li class="toctree-l1"><a class="reference internal" href="changelog.html#version-0-15">Version 0.15</a></li>
+<li class="toctree-l1"><a class="reference internal" href="changelog.html#version-0-16">Version 0.16</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="index.html">PyeDNA</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="index.html">Docs</a> &raquo;</li>
+      
+    <li>PyeDNA</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="_sources/readme.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="pyedna">
+<h1>PyeDNA<a class="headerlink" href="#pyedna" title="Permalink to this headline">¶</a></h1>
+<p>PyeDNA (&#8220;pie-dee-en-ay&#8221;) is a Python wrapper library for the C++ EzDnaApi,
+written for data scientists who wish to work with eDNA data in the context of a
+pandas DataFrame. By converting eDNA data into a DataFrame, data analysis can
+be accomplished using familiar tools like scikit-learn, statsmodels, etc. New
+functions will be added upon request.</p>
+<div class="section" id="disclaimer">
+<h2>Disclaimer<a class="headerlink" href="#disclaimer" title="Permalink to this headline">¶</a></h2>
+<p>PyeDNA is a wrapper library for the API of a data historian called eDNA. eDNA
+is developed by InStepSoftware, LLC (<a class="reference external" href="http://www.instepsoftware.com/">http://www.instepsoftware.com/</a>),
+who holds all rights to the eDNA software. PyeDNA does not contain any
+proprietary code, and is merely a wrapper for functions that must be obtained
+from a legal, licensed version of EzDnaApi.dll.</p>
+</div>
+<div class="section" id="dependencies">
+<h2>Dependencies<a class="headerlink" href="#dependencies" title="Permalink to this headline">¶</a></h2>
+<p>PyeDNA currently requires that a legal, licensed version of the EzDnaApi be
+located in the following directory:</p>
+<p>C:Program Files (x86)eDNAEzDnaApi64.dll</p>
+<p>Required libraries: numba, numpy, pandas</p>
+</div>
+<div class="section" id="examples">
+<h2>Examples<a class="headerlink" href="#examples" title="Permalink to this headline">¶</a></h2>
+<p>All of the core data pulling functions are located in the GetHist function,
+which will return a pandas DataFrame with the timestamp, value, and status
+columns. For example, the following code will pull snap data from TESTPNT1
+over a 30-second interval:</p>
+<p>&gt; import pyedna.ezdna as dna</p>
+<p>&gt; tag = &#8220;TESTSITE.TESTSERVICE.TESTPNT1&#8221;       # format site.service.tag</p>
+<p>&gt; start = &#8220;12/01/16 01:01:01&#8221;                 # format mm/dd/yy hh:mm:ss</p>
+<p>&gt; end = &#8220;01/03/17 01:01:01&#8221;                   # format mm/dd/yy hh:mm:ss</p>
+<p>&gt; period = &#8220;00:00:30&#8221;                         # format hh:mm:ss</p>
+<p>&gt; df = dna.GetHist(tag, start, end, period=period, mode=&#8221;snap&#8221;)</p>
+<p>Raw data may be obtained from TESTPNT1 using:</p>
+<p>&gt; df = dna.GetHist(tag, start, end, mode=&#8221;raw&#8221;)</p>
+<p>Other supported pull types include Average, Interpolated, Max, and Min. Please
+refer to eDNA documentation for more description about these pull types.</p>
+<p>Multiple tags can be pulled (in Raw mode) at the same time using:</p>
+<p>&gt; tags = [&#8220;TESTSITE.TESTSERVICE.TESTPNT1&#8221;, &#8220;TESTSITE.TESTSERVICE.TESTPNT2&#8221;, &#8220;TESTSITE.TESTSERVICE.TESTPNT3&#8221;, &#8220;TESTSITE.TESTSERVICE.TESTPNT4&#8221;]</p>
+<p>&gt; df = dna.GetMultipleTags(tags, start, end)</p>
+<p>A list of connected services may be obtained using GetServices:</p>
+<p>&gt; services = dna.GetServices()</p>
+<p>A list of point information for a given service can be found using GetPoints:</p>
+<p>&gt; points = dna.GetPoints(&#8220;TESTSITE.TESTSERVICE&#8221;)</p>
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="changelog.html" class="btn btn-neutral float-right" title="Version 0.14" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="index.html" class="btn btn-neutral" title="PyeDNA" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017, Eric Strong.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'0.16',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

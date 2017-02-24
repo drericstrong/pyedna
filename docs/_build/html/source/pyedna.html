@@ -1,0 +1,970 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>pyedna package &mdash; PyeDNA 0.16 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="PyeDNA 0.16 documentation" href="../index.html"/> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> PyeDNA
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.16
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul>
+<li class="toctree-l1"><a class="reference internal" href="../readme.html">PyeDNA</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../changelog.html">Version 0.14</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../changelog.html#version-0-15">Version 0.15</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../changelog.html#version-0-16">Version 0.16</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../index.html">PyeDNA</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../index.html">Docs</a> &raquo;</li>
+      
+    <li>pyedna package</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="../_sources/source/pyedna.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="pyedna-package">
+<h1>pyedna package<a class="headerlink" href="#pyedna-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-pyedna.calc_config">
+<span id="pyedna-calc-config-module"></span><h2>pyedna.calc_config module<a class="headerlink" href="#module-pyedna.calc_config" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="pyedna-calc-config">
+<h3>pyedna.calc_config<a class="headerlink" href="#pyedna-calc-config" title="Permalink to this headline">¶</a></h3>
+<p>This module is meant to parse a calc config file from an eDNA service.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">copyright:</th><td class="field-body"><ol class="first loweralpha simple" start="3">
+<li>2017 Eric Strong.</li>
+</ol>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">license:</th><td class="field-body"><p class="first last">Refer to LICENSE.txt for more information.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="class">
+<dt id="pyedna.calc_config.CalcConfig">
+<em class="property">class </em><code class="descclassname">pyedna.calc_config.</code><code class="descname">CalcConfig</code><span class="sig-paren">(</span><em>filename</em>, <em>site_override=None</em><span class="sig-paren">)</span><a class="headerlink" href="#pyedna.calc_config.CalcConfig" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<dl class="method">
+<dt id="pyedna.calc_config.CalcConfig.get_relationships">
+<code class="descname">get_relationships</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pyedna.calc_config.CalcConfig.get_relationships" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the relationships between calc tags and all associated tags.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">a pandas DataFrame with columns:
+&#8216;FullTag&#8217; = calculation tag
+&#8216;TagsInCalc&#8217; = the tags that appear in the calculation</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyedna.calc_config.CalcConfig.write_relationships">
+<code class="descname">write_relationships</code><span class="sig-paren">(</span><em>file_name</em>, <em>flat=True</em><span class="sig-paren">)</span><a class="headerlink" href="#pyedna.calc_config.CalcConfig.write_relationships" title="Permalink to this definition">¶</a></dt>
+<dd><p>This module will output the eDNA tags which are used inside each
+calculation.</p>
+<dl class="docutils">
+<dt>If flat=True, data will be written flat, like:</dt>
+<dd>ADE1CA01, ADE1PI01, ADE1PI02</dd>
+<dt>If flat=False, data will be written in the non-flat way, like:</dt>
+<dd>ADE1CA01, ADE1PI01
+ADE1CA01, ADE1PI02</dd>
+</dl>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>file_name</strong> &#8211; the output filename to write the relationships,
+which should include the &#8216;.csv&#8217; extension</li>
+<li><strong>flat</strong> &#8211; True or False</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+<div class="section" id="module-pyedna.ezdna">
+<span id="pyedna-ezdna-module"></span><h2>pyedna.ezdna module<a class="headerlink" href="#module-pyedna.ezdna" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="pyedna-ezdna">
+<h3>pyedna.ezdna<a class="headerlink" href="#pyedna-ezdna" title="Permalink to this headline">¶</a></h3>
+<p>This module contains &#8220;easy&#8221; versions of common functions from the eDNA
+C++ dll. Obtain a legal copy of the C++ eDNA dll for use.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">copyright:</th><td class="field-body"><ol class="first loweralpha simple" start="3">
+<li>2017 Eric Strong.</li>
+</ol>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">license:</th><td class="field-body"><p class="first last">Refer to LICENSE.txt for more information.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="function">
+<dt id="pyedna.ezdna.DoesIDExist">
+<code class="descclassname">pyedna.ezdna.</code><code class="descname">DoesIDExist</code><span class="sig-paren">(</span><em>tag_name</em><span class="sig-paren">)</span><a class="headerlink" href="#pyedna.ezdna.DoesIDExist" title="Permalink to this definition">¶</a></dt>
+<dd><p>Determines if a fully-qualified site.service.tag eDNA tag exists
+in any of the connected services.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>tag_name</strong> &#8211; fully-qualified (site.service.tag) eDNA tag</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">true if the point exists, false if the point does not exist</td>
+</tr>
+</tbody>
+</table>
+<p>Example:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">DoesIDExist</span><span class="p">(</span><span class="s2">&quot;Site.Service.Tag&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyedna.ezdna.GetHist">
+<code class="descclassname">pyedna.ezdna.</code><code class="descname">GetHist</code><span class="sig-paren">(</span><em>tag_name</em>, <em>start_time</em>, <em>end_time</em>, <em>period=5</em>, <em>mode='raw'</em>, <em>desc_as_label=False</em>, <em>label=None</em>, <em>high_speed=False</em>, <em>utc=False</em><span class="sig-paren">)</span><a class="headerlink" href="#pyedna.ezdna.GetHist" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retrieves data from eDNA history for a given tag.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>tag_name</strong> &#8211; fully-qualified (site.service.tag) eDNA tag</li>
+<li><strong>start_time</strong> &#8211; must be in format mm/dd/yy hh:mm:ss</li>
+<li><strong>end_time</strong> &#8211; must be in format mm/dd/yy hh:mm:ss</li>
+<li><strong>period</strong> &#8211; specify the number of seconds for the pull interval</li>
+<li><strong>mode</strong> &#8211; &#8220;raw&#8221;, &#8220;snap&#8221;, &#8220;avg&#8221;, &#8220;interp&#8221;, &#8220;max&#8221;, &#8220;min&#8221;
+See eDNA documentation for more information.</li>
+<li><strong>desc_as_label</strong> &#8211; use the tag description as the column name instead
+of the full tag</li>
+<li><strong>label</strong> &#8211; supply a custom label to use as the DataFrame column name</li>
+<li><strong>high_speed</strong> &#8211; if True, pull millisecond data</li>
+<li><strong>utc</strong> &#8211; if True, use the integer time format instead of DateTime</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">a pandas DataFrame with timestamp, value, and status</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyedna.ezdna.GetHistAvg">
+<code class="descclassname">pyedna.ezdna.</code><code class="descname">GetHistAvg</code><span class="sig-paren">(</span><em>tag_name</em>, <em>start_time</em>, <em>end_time</em>, <em>period</em>, <em>desc_as_label=False</em>, <em>label=None</em><span class="sig-paren">)</span><a class="headerlink" href="#pyedna.ezdna.GetHistAvg" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retrieves data from eDNA history for a given tag. The data will be
+averaged over the specified &#8220;period&#8221;.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>tag_name</strong> &#8211; fully-qualified (site.service.tag) eDNA tag</li>
+<li><strong>start_time</strong> &#8211; must be in format mm/dd/yy hh:mm:ss</li>
+<li><strong>end_time</strong> &#8211; must be in format mm/dd/yy hh:mm:ss</li>
+<li><strong>period</strong> &#8211; must be in format hh:mm:ss</li>
+<li><strong>desc_as_label</strong> &#8211; use the tag description as the column name instead
+of the full tag</li>
+<li><strong>label</strong> &#8211; supply a custom label to use as the DataFrame column name</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">a pandas DataFrame with timestamp, value, and status</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyedna.ezdna.GetHistInterp">
+<code class="descclassname">pyedna.ezdna.</code><code class="descname">GetHistInterp</code><span class="sig-paren">(</span><em>tag_name</em>, <em>start_time</em>, <em>end_time</em>, <em>period</em>, <em>desc_as_label=False</em>, <em>label=None</em><span class="sig-paren">)</span><a class="headerlink" href="#pyedna.ezdna.GetHistInterp" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retrieves data from eDNA history for a given tag. The data will be
+linearly interpolated over the specified &#8220;period&#8221;.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>tag_name</strong> &#8211; fully-qualified (site.service.tag) eDNA tag</li>
+<li><strong>start_time</strong> &#8211; must be in format mm/dd/yy hh:mm:ss</li>
+<li><strong>end_time</strong> &#8211; must be in format mm/dd/yy hh:mm:ss</li>
+<li><strong>period</strong> &#8211; must be in format hh:mm:ss</li>
+<li><strong>desc_as_label</strong> &#8211; use the tag description as the column name instead
+of the full tag</li>
+<li><strong>label</strong> &#8211; supply a custom label to use as the DataFrame column name</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">a pandas DataFrame with timestamp, value, and status</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyedna.ezdna.GetHistMax">
+<code class="descclassname">pyedna.ezdna.</code><code class="descname">GetHistMax</code><span class="sig-paren">(</span><em>tag_name</em>, <em>start_time</em>, <em>end_time</em>, <em>period</em>, <em>desc_as_label=False</em>, <em>label=None</em><span class="sig-paren">)</span><a class="headerlink" href="#pyedna.ezdna.GetHistMax" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retrieves data from eDNA history for a given tag. The maximum of the data
+will be found over the specified &#8220;period&#8221;.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>tag_name</strong> &#8211; fully-qualified (site.service.tag) eDNA tag</li>
+<li><strong>start_time</strong> &#8211; must be in format mm/dd/yy hh:mm:ss</li>
+<li><strong>end_time</strong> &#8211; must be in format mm/dd/yy hh:mm:ss</li>
+<li><strong>period</strong> &#8211; must be in format hh:mm:ss</li>
+<li><strong>desc_as_label</strong> &#8211; use the tag description as the column name instead
+of the full tag</li>
+<li><strong>label</strong> &#8211; supply a custom label to use as the DataFrame column name</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">a pandas DataFrame with timestamp, value, and status</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyedna.ezdna.GetHistMin">
+<code class="descclassname">pyedna.ezdna.</code><code class="descname">GetHistMin</code><span class="sig-paren">(</span><em>tag_name</em>, <em>start_time</em>, <em>end_time</em>, <em>period</em>, <em>desc_as_label=False</em>, <em>label=None</em><span class="sig-paren">)</span><a class="headerlink" href="#pyedna.ezdna.GetHistMin" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retrieves data from eDNA history for a given tag. The minimum of the data
+will be found over the specified &#8220;period&#8221;.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>tag_name</strong> &#8211; fully-qualified (site.service.tag) eDNA tag</li>
+<li><strong>start_time</strong> &#8211; must be in format mm/dd/yy hh:mm:ss</li>
+<li><strong>end_time</strong> &#8211; must be in format mm/dd/yy hh:mm:ss</li>
+<li><strong>period</strong> &#8211; must be in format hh:mm:ss</li>
+<li><strong>desc_as_label</strong> &#8211; use the tag description as the column name instead
+of the full tag</li>
+<li><strong>label</strong> &#8211; supply a custom label to use as the DataFrame column name</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">a pandas DataFrame with timestamp, value, and status</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyedna.ezdna.GetHistRaw">
+<code class="descclassname">pyedna.ezdna.</code><code class="descname">GetHistRaw</code><span class="sig-paren">(</span><em>tag_name</em>, <em>start_time</em>, <em>end_time</em>, <em>high_speed=False</em>, <em>desc_as_label=False</em>, <em>label=None</em><span class="sig-paren">)</span><a class="headerlink" href="#pyedna.ezdna.GetHistRaw" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retrieves raw data from eDNA history for a given tag.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>tag_name</strong> &#8211; fully-qualified (site.service.tag) eDNA tag</li>
+<li><strong>start_time</strong> &#8211; must be in format mm/dd/yy hh:mm:ss</li>
+<li><strong>end_time</strong> &#8211; must be in format mm/dd/yy hh:mm:ss</li>
+<li><strong>high_speed</strong> &#8211; true = pull milliseconds</li>
+<li><strong>desc_as_label</strong> &#8211; use the tag description as the column name instead
+of the full tag</li>
+<li><strong>label</strong> &#8211; supply a custom label to use as the DataFrame column name</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">a pandas DataFrame with timestamp, value, and status</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyedna.ezdna.GetHistSnap">
+<code class="descclassname">pyedna.ezdna.</code><code class="descname">GetHistSnap</code><span class="sig-paren">(</span><em>tag_name</em>, <em>start_time</em>, <em>end_time</em>, <em>period</em>, <em>desc_as_label=False</em>, <em>label=None</em><span class="sig-paren">)</span><a class="headerlink" href="#pyedna.ezdna.GetHistSnap" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retrieves data from eDNA history for a given tag. The data will be
+snapped to the last known value over intervals of the specified &#8220;period&#8221;.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>tag_name</strong> &#8211; fully-qualified (site.service.tag) eDNA tag</li>
+<li><strong>start_time</strong> &#8211; must be in format mm/dd/yy hh:mm:ss</li>
+<li><strong>end_time</strong> &#8211; must be in format mm/dd/yy hh:mm:ss</li>
+<li><strong>period</strong> &#8211; must be in format hh:mm:ss</li>
+<li><strong>desc_as_label</strong> &#8211; use the tag description as the column name instead
+of the full tag</li>
+<li><strong>label</strong> &#8211; supply a custom label to use as the DataFrame column name</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">a pandas DataFrame with timestamp, value, and status</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyedna.ezdna.GetMultipleTags">
+<code class="descclassname">pyedna.ezdna.</code><code class="descname">GetMultipleTags</code><span class="sig-paren">(</span><em>tag_list</em>, <em>start_time</em>, <em>end_time</em>, <em>sampling_rate=None</em>, <em>fill_limit=99999</em>, <em>verify_time=False</em>, <em>desc_as_label=False</em><span class="sig-paren">)</span><a class="headerlink" href="#pyedna.ezdna.GetMultipleTags" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retrieves raw data from eDNA history for multiple tags, merging them into
+a single DataFrame, and resampling the data according to the specified
+sampling_rate.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>tag_list</strong> &#8211; a list of fully-qualified (site.service.tag) eDNA tags</li>
+<li><strong>start_time</strong> &#8211; must be in format mm/dd/yy hh:mm:ss</li>
+<li><strong>end_time</strong> &#8211; must be in format mm/dd/yy hh:mm:ss</li>
+<li><strong>sampling_rate</strong> &#8211; in units of seconds</li>
+<li><strong>fill_limit</strong> &#8211; in units of data points</li>
+<li><strong>verify_time</strong> &#8211; verify that the time is not before or after the query</li>
+<li><strong>desc_as_label</strong> &#8211; use the tag description as the column name instead
+of the full tag</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">a pandas DataFrame with timestamp and values</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyedna.ezdna.GetPoints">
+<code class="descclassname">pyedna.ezdna.</code><code class="descname">GetPoints</code><span class="sig-paren">(</span><em>edna_service</em><span class="sig-paren">)</span><a class="headerlink" href="#pyedna.ezdna.GetPoints" title="Permalink to this definition">¶</a></dt>
+<dd><p>Obtains all the points in the edna_service, including real-time values.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>edna_service</strong> &#8211; The full Site.Service name of the eDNA service.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">A pandas DataFrame of points in the form [Tag, Value, Time,
+Description, Units]</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyedna.ezdna.GetRTFull">
+<code class="descclassname">pyedna.ezdna.</code><code class="descname">GetRTFull</code><span class="sig-paren">(</span><em>tag_name</em><span class="sig-paren">)</span><a class="headerlink" href="#pyedna.ezdna.GetRTFull" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets current information about a point configured in a real-time
+eDNA service, including current value, time, status, description,
+and units.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>tag_name</strong> &#8211; fully-qualified (site.service.tag) eDNA tag</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">tuple of: alue, time, status, statusint, description, units</td>
+</tr>
+</tbody>
+</table>
+<p>Example:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">tag_tuple</span> <span class="o">=</span> <span class="n">GetRTFull</span><span class="p">(</span><span class="s2">&quot;Site.Service.Tag&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyedna.ezdna.GetServices">
+<code class="descclassname">pyedna.ezdna.</code><code class="descname">GetServices</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pyedna.ezdna.GetServices" title="Permalink to this definition">¶</a></dt>
+<dd><p>Obtains all the connected eDNA services.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">A pandas DataFrame of connected eDNA services in the form [Name,
+Description, Type, Status]</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyedna.ezdna.GetTagDescription">
+<code class="descclassname">pyedna.ezdna.</code><code class="descname">GetTagDescription</code><span class="sig-paren">(</span><em>tag_name</em><span class="sig-paren">)</span><a class="headerlink" href="#pyedna.ezdna.GetTagDescription" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the current description of a point configured in a real-time eDNA
+service.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>tag_name</strong> &#8211; fully-qualified (site.service.tag) eDNA tag</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">tag description</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyedna.ezdna.HistAppendValues">
+<code class="descclassname">pyedna.ezdna.</code><code class="descname">HistAppendValues</code><span class="sig-paren">(</span><em>site_service</em>, <em>tag_name</em>, <em>times</em>, <em>values</em>, <em>statuses</em><span class="sig-paren">)</span><a class="headerlink" href="#pyedna.ezdna.HistAppendValues" title="Permalink to this definition">¶</a></dt>
+<dd><p>Appends a value to an eDNA history service. Take very careful note of the
+following required parameters. Any deviation from this exact format WILL
+cause the function to fail.</p>
+<p>This function will append values to history, only if they are LATER than
+the current time of the last written data point. If this is not true, no
+data will be appended.</p>
+<p>This value is strongly preferred over HistUpdateInsertValues, which will
+slow down data retrieval if it is used too often.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>site_service</strong> &#8211; This is the history service for the eDNA tag, NOT
+the site.service of the tag itself. For instance,
+ANTARES.HISTORY, not ANTARES.ANVCALC</li>
+<li><strong>tag_name</strong> &#8211; This is the full site.service.tag. For instance,
+ANTARES.ANVCALC.ADE1CA02</li>
+<li><strong>times</strong> &#8211; This is a Python array of times in UTC Epoch format.
+For example, &#8220;1483926416&#8221; not &#8220;2016/01/01 01:01:01&#8221;.
+This must be an array.</li>
+<li><strong>values</strong> &#8211; A Python array of data point values for each times.</li>
+<li><strong>statuses</strong> &#8211; The status of the point. Refer to eDNA documentation
+for more information. Usually use &#8216;3&#8217;, which is &#8216;OK&#8217;.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyedna.ezdna.HistUpdateInsertValues">
+<code class="descclassname">pyedna.ezdna.</code><code class="descname">HistUpdateInsertValues</code><span class="sig-paren">(</span><em>site_service</em>, <em>tag_name</em>, <em>times</em>, <em>values</em>, <em>statuses</em><span class="sig-paren">)</span><a class="headerlink" href="#pyedna.ezdna.HistUpdateInsertValues" title="Permalink to this definition">¶</a></dt>
+<dd><p>CAUTION- Use HistAppendValues instead of this function, unless you know
+what you are doing.</p>
+<p>Inserts a value to an eDNA history service. Take very careful note of the
+following required parameters. Any deviation from this exact format WILL
+cause the function to fail.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>site_service</strong> &#8211; This is the history service for the eDNA tag, NOT
+the site.service of the tag itself. For instance,
+ANTARES.HISTORY, not ANTARES.ANVCALC</li>
+<li><strong>tag_name</strong> &#8211; This is the full site.service.tag. For instance,
+ANTARES.ANVCALC.ADE1CA02</li>
+<li><strong>times</strong> &#8211; This is a Python array of times in UTC Epoch format.
+For example, &#8220;1483926416&#8221; not &#8220;2016/01/01 01:01:01&#8221;.
+This must be an array.</li>
+<li><strong>values</strong> &#8211; A Python array of data point values for each times.</li>
+<li><strong>statuses</strong> &#8211; The status of the point. Refer to eDNA documentation
+for more information. Usually use &#8216;3&#8217;, which is &#8216;OK&#8217;.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyedna.ezdna.LoadDll">
+<code class="descclassname">pyedna.ezdna.</code><code class="descname">LoadDll</code><span class="sig-paren">(</span><em>location</em><span class="sig-paren">)</span><a class="headerlink" href="#pyedna.ezdna.LoadDll" title="Permalink to this definition">¶</a></dt>
+<dd><p>If the EzDnaApi64.dll file is not in the default location
+(C:Program Files (x86)eDNAEzDnaApi64.dll) then the user must specify
+the correct location of the file, before this module can be used.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>location</strong> &#8211; the full location of EzDnaApi64.dll, including filename</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyedna.ezdna.SelectPoint">
+<code class="descclassname">pyedna.ezdna.</code><code class="descname">SelectPoint</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pyedna.ezdna.SelectPoint" title="Permalink to this definition">¶</a></dt>
+<dd><p>Opens an eDNA point picker, where the user can select a single tag.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">selected tag name</td>
+</tr>
+</tbody>
+</table>
+<p>Example:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">tag</span> <span class="o">=</span> <span class="n">SelectPoint</span><span class="p">()</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyedna.ezdna.StringToUTCTime">
+<code class="descclassname">pyedna.ezdna.</code><code class="descname">StringToUTCTime</code><span class="sig-paren">(</span><em>time_string</em><span class="sig-paren">)</span><a class="headerlink" href="#pyedna.ezdna.StringToUTCTime" title="Permalink to this definition">¶</a></dt>
+<dd><p>Turns a DateTime string into UTC time.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>time_string</strong> &#8211; Must be the format &#8220;MM/dd/yy hh:mm:ss&#8221;</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">an integer representing the UTC int format</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+</div>
+<div class="section" id="module-pyedna.serv">
+<span id="pyedna-serv-module"></span><h2>pyedna.serv module<a class="headerlink" href="#module-pyedna.serv" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="pyedna-serv">
+<h3>pyedna.serv<a class="headerlink" href="#pyedna-serv" title="Permalink to this headline">¶</a></h3>
+<p>This module contains functions within the EzDnaServApi, mainly used for
+direct interaction with eDNA services, such as pushing data in real-time.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">copyright:</th><td class="field-body"><ol class="first loweralpha simple" start="3">
+<li>2017 Eric Strong.</li>
+</ol>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">license:</th><td class="field-body"><p class="first last">Refer to LICENSE.txt for more information.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="function">
+<dt id="pyedna.serv.AddAnalogShortIdMsecRecord">
+<code class="descclassname">pyedna.serv.</code><code class="descname">AddAnalogShortIdMsecRecord</code><span class="sig-paren">(</span><em>site_service</em>, <em>tag</em>, <em>time_value</em>, <em>msec</em>, <em>value</em>, <em>low_warn=False</em>, <em>high_warn=False</em>, <em>low_alarm=False</em>, <em>high_alarm=False</em>, <em>oor_low=False</em>, <em>oor_high=False</em>, <em>unreliable=False</em>, <em>manual=False</em><span class="sig-paren">)</span><a class="headerlink" href="#pyedna.serv.AddAnalogShortIdMsecRecord" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function will add an analog value to the specified eDNA service and
+tag, with many optional status definitions.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>site_service</strong> &#8211; The site.service where data will be pushed</li>
+<li><strong>tag</strong> &#8211; The eDNA tag to push data. Tag only (e.g. ADE1CA01)</li>
+<li><strong>time_value</strong> &#8211; The time of the point, which MUST be in UTC Epoch
+format. For example, &#8220;1483926416&#8221; not &#8220;2016/01/01 01:01:01&#8221;.</li>
+<li><strong>msec</strong> &#8211; The additional milliseconds for the time_value</li>
+<li><strong>value</strong> &#8211; The value associated with the above time.</li>
+<li><strong>low_warn</strong> &#8211; TRUE if the point is in a low warning state</li>
+<li><strong>high_warn</strong> &#8211; TRUE if the point is in a high warning state</li>
+<li><strong>low_alarm</strong> &#8211; TRUE if the point is in a low alarm state</li>
+<li><strong>high_alarm</strong> &#8211; TRUE if the point is in a high alarm state</li>
+<li><strong>oor_low</strong> &#8211; TRUE if the point is out-of-range low</li>
+<li><strong>oor_high</strong> &#8211; TRUE if the point is out-of-range high</li>
+<li><strong>unreliable</strong> &#8211; TRUE if the point is unreliable</li>
+<li><strong>manual</strong> &#8211; TRUE if the point is manually set</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">0, if the data push is successful</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyedna.serv.AddAnalogShortIdMsecRecordNoStatus">
+<code class="descclassname">pyedna.serv.</code><code class="descname">AddAnalogShortIdMsecRecordNoStatus</code><span class="sig-paren">(</span><em>site_service</em>, <em>tag</em>, <em>time_value</em>, <em>msec</em>, <em>value</em><span class="sig-paren">)</span><a class="headerlink" href="#pyedna.serv.AddAnalogShortIdMsecRecordNoStatus" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function will add an analog value to the specified eDNA service and
+tag, without an associated point status.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>site_service</strong> &#8211; The site.service where data will be pushed</li>
+<li><strong>tag</strong> &#8211; The eDNA tag to push data. Tag only (e.g. ADE1CA01)</li>
+<li><strong>time_value</strong> &#8211; The time of the point, which MUST be in UTC Epoch
+format. For example, &#8220;1483926416&#8221; not &#8220;2016/01/01 01:01:01&#8221;.</li>
+<li><strong>msec</strong> &#8211; The additional milliseconds for the time_value</li>
+<li><strong>value</strong> &#8211; The value associated with the above time.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">0, if the data push is successful</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyedna.serv.AddAnalogShortIdRecord">
+<code class="descclassname">pyedna.serv.</code><code class="descname">AddAnalogShortIdRecord</code><span class="sig-paren">(</span><em>site_service</em>, <em>tag</em>, <em>time_value</em>, <em>value</em>, <em>low_warn=False</em>, <em>high_warn=False</em>, <em>low_alarm=False</em>, <em>high_alarm=False</em>, <em>oor_low=False</em>, <em>oor_high=False</em>, <em>unreliable=False</em>, <em>manual=False</em><span class="sig-paren">)</span><a class="headerlink" href="#pyedna.serv.AddAnalogShortIdRecord" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function will add an analog value to the specified eDNA service and
+tag, with many optional status definitions.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>site_service</strong> &#8211; The site.service where data will be pushed</li>
+<li><strong>tag</strong> &#8211; The eDNA tag to push data. Tag only (e.g. ADE1CA01)</li>
+<li><strong>time_value</strong> &#8211; The time of the point, which MUST be in UTC Epoch
+format. For example, &#8220;1483926416&#8221; not &#8220;2016/01/01 01:01:01&#8221;.</li>
+<li><strong>value</strong> &#8211; The value associated with the above time.</li>
+<li><strong>low_warn</strong> &#8211; TRUE if the point is in a low warning state</li>
+<li><strong>high_warn</strong> &#8211; TRUE if the point is in a high warning state</li>
+<li><strong>low_alarm</strong> &#8211; TRUE if the point is in a low alarm state</li>
+<li><strong>high_alarm</strong> &#8211; TRUE if the point is in a high alarm state</li>
+<li><strong>oor_low</strong> &#8211; TRUE if the point is out-of-range low</li>
+<li><strong>oor_high</strong> &#8211; TRUE if the point is out-of-range high</li>
+<li><strong>unreliable</strong> &#8211; TRUE if the point is unreliable</li>
+<li><strong>manual</strong> &#8211; TRUE if the point is manually set</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">0, if the data push is successful</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyedna.serv.AddAnalogShortIdRecordNoStatus">
+<code class="descclassname">pyedna.serv.</code><code class="descname">AddAnalogShortIdRecordNoStatus</code><span class="sig-paren">(</span><em>site_service</em>, <em>tag</em>, <em>time_value</em>, <em>value</em><span class="sig-paren">)</span><a class="headerlink" href="#pyedna.serv.AddAnalogShortIdRecordNoStatus" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function will add an analog value to the specified eDNA service and
+tag, without an associated point status.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>site_service</strong> &#8211; The site.service where data will be pushed</li>
+<li><strong>tag</strong> &#8211; The eDNA tag to push data. Tag only (e.g. ADE1CA01)</li>
+<li><strong>time_value</strong> &#8211; The time of the point, which MUST be in UTC Epoch
+format. For example, &#8220;1483926416&#8221; not &#8220;2016/01/01 01:01:01&#8221;.</li>
+<li><strong>value</strong> &#8211; The value associated with the above time.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">0, if the data push is successful</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyedna.serv.AddDigitalShortIdMsecRecord">
+<code class="descclassname">pyedna.serv.</code><code class="descname">AddDigitalShortIdMsecRecord</code><span class="sig-paren">(</span><em>site_service</em>, <em>tag</em>, <em>time_value</em>, <em>msec</em>, <em>value</em>, <em>status_string='OK              '</em>, <em>warn=False</em>, <em>chattering=False</em>, <em>unreliable=False</em>, <em>manual=False</em><span class="sig-paren">)</span><a class="headerlink" href="#pyedna.serv.AddDigitalShortIdMsecRecord" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function will add a digital value to the specified eDNA service and
+tag, including all default point status definitions.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>site_service</strong> &#8211; The site.service where data will be pushed</li>
+<li><strong>tag</strong> &#8211; The eDNA tag to push data. Tag only (e.g. ADE1CA01)</li>
+<li><strong>time_value</strong> &#8211; The time of the point, which MUST be in UTC Epoch
+format. For example, &#8220;1483926416&#8221; not &#8220;2016/01/01 01:01:01&#8221;.</li>
+<li><strong>msec</strong> &#8211; The additional milliseconds for the time_value</li>
+<li><strong>value</strong> &#8211; should be either TRUE or FALSE</li>
+<li><strong>status_string</strong> &#8211; a string that must be EXACTLY 16 characters</li>
+<li><strong>warn</strong> &#8211; TRUE if the point is in a warning state</li>
+<li><strong>chattering</strong> &#8211; TRUE if the point is in a chattering state</li>
+<li><strong>unreliable</strong> &#8211; TRUE if the point is in an unreliable state</li>
+<li><strong>manual</strong> &#8211; TRUE if the point was manually set</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">0, if the data push is successful</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyedna.serv.AddDigitalShortIdRecord">
+<code class="descclassname">pyedna.serv.</code><code class="descname">AddDigitalShortIdRecord</code><span class="sig-paren">(</span><em>site_service</em>, <em>tag</em>, <em>time_value</em>, <em>value</em>, <em>status_string='OK              '</em>, <em>warn=False</em>, <em>chattering=False</em>, <em>unreliable=False</em>, <em>manual=False</em><span class="sig-paren">)</span><a class="headerlink" href="#pyedna.serv.AddDigitalShortIdRecord" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function will add a digital value to the specified eDNA service and
+tag, including all default point status definitions.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>site_service</strong> &#8211; The site.service where data will be pushed</li>
+<li><strong>tag</strong> &#8211; The eDNA tag to push data. Tag only (e.g. ADE1CA01)</li>
+<li><strong>time_value</strong> &#8211; The time of the point, which MUST be in UTC Epoch
+format. For example, &#8220;1483926416&#8221; not &#8220;2016/01/01 01:01:01&#8221;.</li>
+<li><strong>value</strong> &#8211; should be either TRUE or FALSE</li>
+<li><strong>status_string</strong> &#8211; a string that must be EXACTLY 16 characters</li>
+<li><strong>warn</strong> &#8211; TRUE if the point is in a warning state</li>
+<li><strong>chattering</strong> &#8211; TRUE if the point is in a chattering state</li>
+<li><strong>unreliable</strong> &#8211; TRUE if the point is in an unreliable state</li>
+<li><strong>manual</strong> &#8211; TRUE if the point was manually set</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">0, if the data push is successful</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyedna.serv.FlushShortIdRecords">
+<code class="descclassname">pyedna.serv.</code><code class="descname">FlushShortIdRecords</code><span class="sig-paren">(</span><em>site_service</em><span class="sig-paren">)</span><a class="headerlink" href="#pyedna.serv.FlushShortIdRecords" title="Permalink to this definition">¶</a></dt>
+<dd><p>Flush all the queued records.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>site_service</strong> &#8211; The site.service where data was pushed</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">message whether function was successful</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyedna.serv.LoadDll">
+<code class="descclassname">pyedna.serv.</code><code class="descname">LoadDll</code><span class="sig-paren">(</span><em>location</em><span class="sig-paren">)</span><a class="headerlink" href="#pyedna.serv.LoadDll" title="Permalink to this definition">¶</a></dt>
+<dd><p>If the EZDnaServApi64.dll file is not in the default location
+(C:Program Files (x86)eDNAEZDnaServApi64.dll) then the user must specify
+the correct location of the file, before this module can be used.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>location</strong> &#8211; full location of EZDnaServApi64.dll, including filename</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+</div>
+<div class="section" id="module-pyedna">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-pyedna" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="pyedna">
+<h3>pyedna<a class="headerlink" href="#pyedna" title="Permalink to this headline">¶</a></h3>
+<p>A set of Python wrappers for functions in the eDNA API.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">copyright:</th><td class="field-body"><ol class="first loweralpha simple" start="3">
+<li>2017 by Eric Strong.</li>
+</ol>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">license:</th><td class="field-body"><p class="first last">Refer to LICENSE.txt for more information.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017, Eric Strong.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'0.16',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

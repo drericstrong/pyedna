@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
     pyedna.ezdna
-    ~~~~~~~~~~~~~~~
+    ~~~~~~~~~~~~
     This module contains "easy" versions of common functions from the eDNA
     C++ dll. Obtain a legal copy of the C++ eDNA dll for use.
 
@@ -15,10 +15,12 @@
 
 import re
 import os
+import numba
 import warnings
+import numpy as np
 import pandas as pd
 from ctypes import cdll, byref, create_string_buffer
-from ctypes import c_char_p, c_double, c_short, c_ushort, c_long, c_ulong
+from ctypes import c_char_p, c_double, c_ushort, c_long, c_ulong
 
 # This code should execute at the beginning of the module import, because
 # all of the functions in this module require the dna_dll library to be
@@ -59,50 +61,6 @@ def _format_str(text):
         return text
 
 
-def _GetNextHist(pulKey, nRet, tag_name, high_speed=False):
-    # This is a base function that iterates over a predefined history call,
-    # which may be raw, snap, max, min, etc.
-    # Define all required variables in the correct ctypes format
-    pdValue, nTime, nStatus = c_double(-9999), c_ushort(25), c_ushort(25)
-    szTime, szStatus = create_string_buffer(25), create_string_buffer(25)
-    time_array, val_array, status_array = [], [], []
-
-    # Once nRet is not zero, the function was terminated, either due to an
-    # error or due to the end of the data period.
-    while nRet == 0:
-        if high_speed:
-            nRet = dna_dll.DnaGetNextHSHist(pulKey, byref(pdValue),
-                byref(szTime), nTime, byref(szStatus), nStatus)
-        else:
-            nRet = dna_dll.DnaGetNextHist(pulKey, byref(pdValue),
-                byref(szTime), nTime, byref(szStatus), nStatus)
-        time_array.append(szTime.value.decode('utf-8'))
-        val_array.append(pdValue.value)
-        status_array.append(szStatus.value.decode('utf-8'))
-    # The history request must be cancelled to free up network resources
-    dna_dll.DnaCancelHistRequest(pulKey)
-
-    # To construct the pandas DataFrame, the tag name will be used as the
-    # column name, and the index (which is in the strange eDNA format) must be
-    # converted to an actual DateTime
-    d = {tag_name + ' Status': status_array,
-         tag_name: val_array}
-    df = pd.DataFrame.from_records(data=d, index=time_array)
-    df.index = pd.to_datetime(df.index)
-    return df
-
-
-def _GetLabel(tag_name):
-    # This function tries to get the tag description to use as the label for
-    # the variable in the pandas DataFrame. It removes any special characters
-    # and trims whitespace before and after. If the label is blank, the
-    # tag name will be returned again instead.
-    label = GetTagDescription(tag_name)
-    if label:
-        return label
-    else:
-        return tag_name
-
 def DoesIDExist(tag_name):
     """
     Determines if a fully-qualified site.service.tag eDNA tag exists
@@ -123,54 +81,330 @@ def DoesIDExist(tag_name):
     return result
 
 
-def GetServices():
+def GetHistAvg(tag_name, start_time, end_time, period,
+               desc_as_label=False, label=None):
     """
-    Obtains all the connected eDNA services.
+    Retrieves data from eDNA history for a given tag. The data will be
+    averaged over the specified "period".
 
-    :return: A pandas DataFrame of connected eDNA services in the form [Name,
-        Description, Type, Status]
+    :param tag_name: fully-qualified (site.service.tag) eDNA tag
+    :param start_time: must be in format mm/dd/yy hh:mm:ss
+    :param end_time: must be in format mm/dd/yy hh:mm:ss
+    :param period: must be in format hh:mm:ss
+    :param desc_as_label: use the tag description as the column name instead
+        of the full tag
+    :param label: supply a custom label to use as the DataFrame column name
+    :return: a pandas DataFrame with timestamp, value, and status
     """
+    return GetHist(tag_name, start_time, end_time, mode="avg", period=period,
+                   desc_as_label=desc_as_label, label=label)
+
+def GetHistInterp(tag_name, start_time, end_time, period,
+                  desc_as_label=False, label=None):
+    """
+    Retrieves data from eDNA history for a given tag. The data will be
+    linearly interpolated over the specified "period".
+
+    :param tag_name: fully-qualified (site.service.tag) eDNA tag
+    :param start_time: must be in format mm/dd/yy hh:mm:ss
+    :param end_time: must be in format mm/dd/yy hh:mm:ss
+    :param period: must be in format hh:mm:ss
+    :param desc_as_label: use the tag description as the column name instead
+        of the full tag
+    :param label: supply a custom label to use as the DataFrame column name
+    :return: a pandas DataFrame with timestamp, value, and status
+    """
+    return GetHist(tag_name, start_time, end_time, mode="interp",
+                   period=period, desc_as_label=desc_as_label, label=label)
+
+
+def GetHistMax(tag_name, start_time, end_time, period,
+               desc_as_label=False, label=None):
+    """
+    Retrieves data from eDNA history for a given tag. The maximum of the data
+    will be found over the specified "period".
+
+    :param tag_name: fully-qualified (site.service.tag) eDNA tag
+    :param start_time: must be in format mm/dd/yy hh:mm:ss
+    :param end_time: must be in format mm/dd/yy hh:mm:ss
+    :param period: must be in format hh:mm:ss
+    :param desc_as_label: use the tag description as the column name instead
+        of the full tag
+    :param label: supply a custom label to use as the DataFrame column name
+    :return: a pandas DataFrame with timestamp, value, and status
+    """
+    return GetHist(tag_name, start_time, end_time, mode="max",
+                   period=period, desc_as_label=desc_as_label, label=label)
+
+
+def GetHistMin(tag_name, start_time, end_time, period,
+               desc_as_label=False, label=None):
+    """
+    Retrieves data from eDNA history for a given tag. The minimum of the data
+    will be found over the specified "period".
+
+    :param tag_name: fully-qualified (site.service.tag) eDNA tag
+    :param start_time: must be in format mm/dd/yy hh:mm:ss
+    :param end_time: must be in format mm/dd/yy hh:mm:ss
+    :param period: must be in format hh:mm:ss
+    :param desc_as_label: use the tag description as the column name instead
+        of the full tag
+    :param label: supply a custom label to use as the DataFrame column name
+    :return: a pandas DataFrame with timestamp, value, and status
+    """
+    return GetHist(tag_name, start_time, end_time, mode="min",
+                   period=period, desc_as_label=desc_as_label, label=label)
+
+
+def GetHistRaw(tag_name, start_time, end_time, high_speed=False,
+               desc_as_label=False, label=None):
+    """
+    Retrieves raw data from eDNA history for a given tag.
+
+    :param tag_name: fully-qualified (site.service.tag) eDNA tag
+    :param start_time: must be in format mm/dd/yy hh:mm:ss
+    :param end_time: must be in format mm/dd/yy hh:mm:ss
+    :param high_speed: true = pull milliseconds
+    :param desc_as_label: use the tag description as the column name instead
+        of the full tag
+    :param label: supply a custom label to use as the DataFrame column name
+    :return: a pandas DataFrame with timestamp, value, and status
+    """
+    return GetHist(tag_name, start_time, end_time, mode="raw",
+                   desc_as_label=desc_as_label, label=label)
+
+
+def GetHistSnap(tag_name, start_time, end_time, period,
+                desc_as_label=False, label=None):
+    """
+    Retrieves data from eDNA history for a given tag. The data will be
+    snapped to the last known value over intervals of the specified "period".
+
+    :param tag_name: fully-qualified (site.service.tag) eDNA tag
+    :param start_time: must be in format mm/dd/yy hh:mm:ss
+    :param end_time: must be in format mm/dd/yy hh:mm:ss
+    :param period: must be in format hh:mm:ss
+    :param desc_as_label: use the tag description as the column name instead
+        of the full tag
+    :param label: supply a custom label to use as the DataFrame column name
+    :return: a pandas DataFrame with timestamp, value, and status
+    """
+    return GetHist(tag_name, start_time, end_time, mode="snap",
+                   period=period, desc_as_label=desc_as_label, label=label)
+
+
+def GetHist(tag_name, start_time, end_time, period=5, mode="raw",
+            desc_as_label=False, label=None, high_speed=False, utc=False):
+    """
+    Retrieves data from eDNA history for a given tag.
+
+    :param tag_name: fully-qualified (site.service.tag) eDNA tag
+    :param start_time: must be in format mm/dd/yy hh:mm:ss
+    :param end_time: must be in format mm/dd/yy hh:mm:ss
+    :param period: specify the number of seconds for the pull interval
+    :param mode: "raw", "snap", "avg", "interp", "max", "min"
+        See eDNA documentation for more information.
+    :param desc_as_label: use the tag description as the column name instead
+        of the full tag
+    :param label: supply a custom label to use as the DataFrame column name
+    :param high_speed: if True, pull millisecond data
+    :param utc: if True, use the integer time format instead of DateTime
+    :return: a pandas DataFrame with timestamp, value, and status
+    """
+    # Check if the point even exists
+    if not DoesIDExist(tag_name):
+        warnings.warn("WARNING- " + tag_name + " does not exist or " +
+            "connection was dropped. Try again if tag does exist.")
+        return pd.DataFrame()
+
     # Define all required variables in the correct ctypes format
+    szPoint = c_char_p(tag_name.encode('utf-8'))
+    tStart = c_long(StringToUTCTime(start_time))
+    tEnd = c_long(StringToUTCTime(end_time))
+    tPeriod = c_long(period)
     pulKey = c_ulong(0)
-    szType = c_char_p("".encode('utf-8'))
-    szStartSvcName = c_char_p("".encode('utf-8'))
-    szSvcName, szSvcDesc = create_string_buffer(30), create_string_buffer(90)
-    szSvcType, szSvcStat = create_string_buffer(30), create_string_buffer(30)
-    szSvcName2, szSvcDesc2 = create_string_buffer(30), create_string_buffer(90)
-    szSvcType2, szSvcStat2 = create_string_buffer(30), create_string_buffer(30)
-    nSvcName, nSvcDesc = c_ushort(30), c_ushort(90)
-    nSvcType, nSvcStat = c_ushort(30), c_ushort(30)
 
-    # Call the eDNA function. nRet is zero if the function is successful.
-    nRet = dna_dll.DnaGetServiceEntry(szType, szStartSvcName, byref(pulKey),
-        byref(szSvcName), nSvcName, byref(szSvcDesc), nSvcDesc,
-        byref(szSvcType), nSvcType, byref(szSvcStat), nSvcStat)
-
-    # Iterate across all the returned services
-    services = []
-    while nRet == 0:
-        nRet = dna_dll.DnaGetNextServiceEntry(pulKey,
-            byref(szSvcName2), nSvcName, byref(szSvcDesc2), nSvcDesc,
-            byref(szSvcType2), nSvcType, byref(szSvcStat2), nSvcStat)
-        # We want to ensure only UTF-8 characters are returned. Ignoring
-        # characters is slightly unsafe, but they should only occur in the
-        # units or description, so it's not a huge issue.
-        name = _format_str(szSvcName2.value.decode(errors='ignore'))
-        desc = _format_str(szSvcDesc2.value.decode(errors='ignore'))
-        type_ = _format_str(szSvcType2.value.decode(errors='ignore'))
-        status = _format_str(szSvcStat2.value.decode(errors='ignore'))
-        if name:
-            services.append([name, desc, type_, status])
-
-    # If no results were returned, raise a warning
-    df = pd.DataFrame()
-    if services:
-        df = pd.DataFrame(services, columns=["Name", "Description", "Type",
-                                             "Status"])
+    # Initialize the data pull using the specified pulKey, which is an
+    # identifier that tells eDNA which data pull is occurring
+    mode = mode.lower().strip()
+    if not high_speed:
+        if mode is "avg":
+            nRet = dna_dll.DnaGetHistAvgUTC(szPoint, tStart, tEnd, tPeriod, byref(pulKey))
+        if mode is "interp":
+            nRet = dna_dll.DnaGetHistInterpUTC(szPoint, tStart, tEnd, tPeriod, byref(pulKey))
+        if mode is "min":
+            nRet = dna_dll.DnaGetHistMinUTC(szPoint, tStart, tEnd, tPeriod, byref(pulKey))
+        if mode is "max":
+            nRet = dna_dll.DnaGetHistMaxUTC(szPoint, tStart, tEnd, tPeriod, byref(pulKey))
+        if mode is "snap":
+            nRet = dna_dll.DnaGetHistSnapUTC(szPoint, tStart, tEnd, tPeriod, byref(pulKey))
+        else:
+            nRet = dna_dll.DnaGetHistRawUTC(szPoint, tStart, tEnd, byref(pulKey))
+        time_, val, stat = _GetNextHistSmallUTC(pulKey, nRet)
     else:
-        warnings.warn("WARNING- No connected eDNA services detected. Check " +
-                      "your DNASys.ini file and your network connection.")
+        nStartMillis = c_ushort(0)
+        nEndMillis = c_ushort(0)
+        nRet = dna_dll.DnaGetHSHistRawUTC(szPoint, tStart, nStartMillis,
+            tEnd, nEndMillis, byref(pulKey))
+        time_, val, stat = _GetNextHSHistUTC(pulKey, nRet)
+
+    # The history request must be cancelled to free up network resources
+    dna_dll.DnaCancelHistRequest(pulKey)
+
+    # To construct the pandas DataFrame, the tag name will be used as the
+    # column name, and the index (which is in the strange eDNA format) must be
+    # converted to an actual DateTime
+    d = {tag_name + ' Status': stat, tag_name: val}
+    df = pd.DataFrame(data=d, index=time_)
+    if not utc:
+        if not high_speed:
+            df.index = pd.to_datetime(df.index, unit="s")
+        else:
+            df.index = pd.to_datetime(df.index, unit="ms")
+    if df.empty:
+        warnings.warn('WARNING- No data retrieved for ' + tag_name + '. ' +
+                      'Check eDNA connection, ensure that the start time is ' +
+                      'not later than the end time, verify that the ' +
+                      'DateTime formatting matches eDNA requirements, and ' +
+                      'check that data exists in the query time period.')
+
+    # Check if the user would rather use the description as the column name
+    if desc_as_label or label:
+        if label:
+            new_label = label
+        else:
+            new_label = _GetLabel(tag_name)
+        df.rename(inplace=True, columns={tag_name: new_label,
+                  tag_name + " Status": new_label + " Status"})
     return df
+
+
+@numba.jit
+def _GetNextHistSmallUTC(pulKey, nRet):
+    # This is a base function that iterates over a predefined history call,
+    # which may be raw, snap, max, min, etc.
+    pdValue, ptTime, pusStatus = c_double(-9999), c_long(-9999), c_ushort(0)
+    refVal, refTime, refStat = byref(pdValue), byref(ptTime), byref(pusStatus)
+    val = np.empty(0)
+    time_ = np.empty(0)
+    stat = np.empty(0)
+
+    # Once nRet is not zero, the function was terminated, either due to an
+    # error or due to the end of the data period.
+    while nRet == 0:
+        nRet = dna_dll.DnaGetNextHistSmallUTC(pulKey, refVal, refTime, refStat)
+        val = np.append(val, pdValue.value)
+        time_ = np.append(time_, ptTime.value)
+        stat = np.append(stat, pusStatus.value)
+    return time_, val, stat
+
+
+@numba.jit
+def _GetNextHSHistUTC(pulKey, nRet):
+    # This is a base function that iterates over a predefined history call,
+    # which may be raw, snap, max, min, etc.
+    pdValue, ptTime, pnMillis = c_double(-9999), c_long(-9999), c_ushort(0)
+    szStatus, nStatus = create_string_buffer(20), c_ushort(20)
+    refVal, refTime, refMillis = byref(pdValue), byref(ptTime), byref(pnMillis)
+    refStatus = byref(szStatus)
+    val = np.empty(0)
+    time_ = np.empty(0)
+    stat = np.empty(0)
+
+    # Once nRet is not zero, the function was terminated, either due to an
+    # error or due to the end of the data period.
+    while nRet == 0:
+        nRet = dna_dll.DnaGetNextHSHistUTC(pulKey, refVal, refTime, refMillis,
+                                           refStatus, nStatus)
+        val = np.append(val, pdValue.value)
+        time_ = np.append(time_, ptTime.value*1000 + pnMillis.value)
+        stat = np.append(stat, 3)
+    return time_, val, stat
+
+
+def _GetLabel(tag_name):
+    # This function tries to get the tag description to use as the label for
+    # the variable in the pandas DataFrame. It removes any special characters
+    # and trims whitespace before and after. If the label is blank, the
+    # tag name will be returned again instead.
+    label = GetTagDescription(tag_name)
+    if label:
+        return label
+    else:
+        return tag_name
+
+
+def GetMultipleTags(tag_list, start_time, end_time, sampling_rate=None,
+                    fill_limit=99999, verify_time=False, desc_as_label=False):
+    """
+    Retrieves raw data from eDNA history for multiple tags, merging them into
+    a single DataFrame, and resampling the data according to the specified
+    sampling_rate.
+
+    :param tag_list: a list of fully-qualified (site.service.tag) eDNA tags
+    :param start_time: must be in format mm/dd/yy hh:mm:ss
+    :param end_time: must be in format mm/dd/yy hh:mm:ss
+    :param sampling_rate: in units of seconds
+    :param fill_limit: in units of data points
+    :param verify_time: verify that the time is not before or after the query
+    :param desc_as_label: use the tag description as the column name instead
+        of the full tag
+    :return: a pandas DataFrame with timestamp and values
+    """
+    # Since we are pulling data from multiple tags, let's iterate over each
+    # one. For this case, we only want to pull data using the "raw" method,
+    # which will obtain all data as it is actually stored in the historian.
+    dfs = []
+    columns_names = []
+    for tag in tag_list:
+        df = GetHist(tag, start_time, end_time)
+        if not df.empty:
+            # Sometimes a duplicate index/value pair is retrieved from
+            # eDNA, which will cause the concat to fail if not removed
+            df.drop_duplicates(inplace=True)
+            # If the user wants to use descriptions as labels, we need to
+            # ensure that only unique labels are used
+            label = tag
+            if desc_as_label:
+                orig_label = _GetLabel(tag)
+                label = orig_label
+                rename_number = 2
+                while label in columns_names:
+                    label = orig_label + str(rename_number)
+                    rename_number += 1
+                columns_names.append(label)
+                df.rename(columns={tag: label}, inplace=True)
+            # Add the DataFrame to the list, to be concatenated later
+            dfs.append(pd.DataFrame(df[label]))
+
+    # Next, we concatenate all the DataFrames using an outer join (default).
+    # Verify integrity is slow, but it ensures that the concatenation
+    # worked correctly.
+    if dfs:
+        merged_df = pd.concat(dfs, axis=1, verify_integrity=True)
+        merged_df = merged_df.fillna(method="ffill", limit=fill_limit)
+    else:
+        warnings.warn('WARNING- No data retrieved for any tags. ' +
+                      'Check eDNA connection, ensure that the start time is ' +
+                      'not later than the end time, verify that the ' +
+                      'DateTime formatting matches eDNA requirements, and ' +
+                      'check that data exists in the query time period.')
+        return pd.DataFrame()
+
+    # eDNA sometimes pulls data too early or too far- let's filter out all
+    # the data that is not within our original criteria.
+    if verify_time:
+        start_np = pd.to_datetime(start_time)
+        end_np = pd.to_datetime(end_time)
+        mask = (merged_df.index > start_np) & (merged_df.index <= end_np)
+        merged_df = merged_df.loc[mask]
+
+    # Finally, we resample the data at the rate requested by the user.
+    if sampling_rate:
+        sampling_string = str(sampling_rate) + "S"
+        merged_df = merged_df.resample(sampling_string).fillna(
+            method="ffill", limit=fill_limit)
+    return merged_df
 
 
 def GetPoints(edna_service):
@@ -228,42 +462,6 @@ def GetPoints(edna_service):
     return df
 
 
-def GetTagDescription(tag_name):
-    """
-    Gets the current description of a point configured in a real-time eDNA
-    service.
-
-    :param tag_name: fully-qualified (site.service.tag) eDNA tag
-    :return: tag description
-    """
-    # Check if the point even exists
-    if not DoesIDExist(tag_name):
-        warnings.warn("WARNING- " + tag_name + " does not exist or " +
-                      "connection was dropped. Try again if tag does exist.")
-        return None
-
-    # To get the point information for the service, we need the Site.Service
-    split_tag = tag_name.split(".")
-    # If the full Site.Service.Tag was not supplied, return the tag_name
-    if len(split_tag) < 3:
-        warnings.warn("WARNING- Please supply the full Site.Service.Tag.")
-        return tag_name
-    # The Site.Service will be the first two split strings
-    site_service = split_tag[0] + "." + split_tag[1]
-
-    # GetPoints will return a DataFrame with point information
-    points = GetPoints(site_service)
-    if tag_name in points.Tag.values:
-        description = points[points.Tag == tag_name].Description.values[0]
-        if description:
-            return description
-        else:
-            return tag_name
-    else:
-        warnings.warn("WARNING- " + tag_name + " not found in service.")
-        return None
-
-
 def GetRTFull(tag_name):
     """
     Gets current information about a point configured in a real-time
@@ -308,425 +506,90 @@ def GetRTFull(tag_name):
         return None
 
 
-def GetHistAvg(tag_name, start_time, end_time, period,
-               desc_as_label=False, label=None):
+def GetServices():
     """
-    Retrieves data from eDNA history for a given tag. The data will be
-    averaged over the specified "period".
+    Obtains all the connected eDNA services.
 
-    :param tag_name: fully-qualified (site.service.tag) eDNA tag
-    :param start_time: must be in format mm/dd/yy hh:mm:ss
-    :param end_time: must be in format mm/dd/yy hh:mm:ss
-    :param period: must be in format hh:mm:ss
-    :param desc_as_label: use the tag description as the column name instead
-        of the full tag
-    :param label: supply a custom label to use as the DataFrame column name
-    :return: a pandas DataFrame with timestamp, value, and status
-
-    Example:
-
-    >>> df = GetHistAvg("Site.Service.Tag", "01/01/17 01:01:01", \
-                        "01/02/17 01:01:01", "00:00:01")
-
+    :return: A pandas DataFrame of connected eDNA services in the form [Name,
+        Description, Type, Status]
     """
-    # Check if the point even exists
-    if not DoesIDExist(tag_name):
-        warnings.warn("WARNING- " + tag_name + " does not exist or " +
-            "connection was dropped. Try again if tag does exist.")
-        return pd.DataFrame()
-
     # Define all required variables in the correct ctypes format
-    szPoint = c_char_p(tag_name.encode('utf-8'))
-    szStart = c_char_p(start_time.encode('utf-8'))
-    szEnd = c_char_p(end_time.encode('utf-8'))
-    szPeriod = c_char_p(period.encode('utf-8'))
     pulKey = c_ulong(0)
+    szType = c_char_p("".encode('utf-8'))
+    szStartSvcName = c_char_p("".encode('utf-8'))
+    szSvcName, szSvcDesc = create_string_buffer(30), create_string_buffer(90)
+    szSvcType, szSvcStat = create_string_buffer(30), create_string_buffer(30)
+    szSvcName2, szSvcDesc2 = create_string_buffer(30), create_string_buffer(90)
+    szSvcType2, szSvcStat2 = create_string_buffer(30), create_string_buffer(30)
+    nSvcName, nSvcDesc = c_ushort(30), c_ushort(90)
+    nSvcType, nSvcStat = c_ushort(30), c_ushort(30)
 
-    # Initialize the data pull using the specified pulKey, which is an
-    # identifier that tells eDNA which data pull is occurring
-    nRet = dna_dll.DnaGetHistAvg(szPoint, szStart, szEnd, szPeriod,
-                                 byref(pulKey))
-    # The internal function _GetNextHist iterates over the initialized pull
-    df = _GetNextHist(pulKey, nRet, tag_name)
-    if df.empty:
-        warnings.warn('WARNING- No data retrieved for ' + tag_name + '. ' +
-                      'Check eDNA connection, ensure that the start time is ' +
-                      'not later than the end time, verify that the ' +
-                      'DateTime formatting matches eDNA requirements, and ' +
-                      'check that data exists in the query time period.')
+    # Call the eDNA function. nRet is zero if the function is successful.
+    nRet = dna_dll.DnaGetServiceEntry(szType, szStartSvcName, byref(pulKey),
+        byref(szSvcName), nSvcName, byref(szSvcDesc), nSvcDesc,
+        byref(szSvcType), nSvcType, byref(szSvcStat), nSvcStat)
 
-    # Check if the user would rather use the description as the column name
-    if desc_as_label or label:
-        if label:
-            new_label = label
-        else:
-            new_label = _GetLabel(tag_name)
-        df.rename(inplace=True, columns={tag_name: new_label,
-                tag_name + " Status": new_label + " Status"})
-    return df
+    # Iterate across all the returned services
+    services = []
+    while nRet == 0:
+        nRet = dna_dll.DnaGetNextServiceEntry(pulKey,
+            byref(szSvcName2), nSvcName, byref(szSvcDesc2), nSvcDesc,
+            byref(szSvcType2), nSvcType, byref(szSvcStat2), nSvcStat)
+        # We want to ensure only UTF-8 characters are returned. Ignoring
+        # characters is slightly unsafe, but they should only occur in the
+        # units or description, so it's not a huge issue.
+        name = _format_str(szSvcName2.value.decode(errors='ignore'))
+        desc = _format_str(szSvcDesc2.value.decode(errors='ignore'))
+        type_ = _format_str(szSvcType2.value.decode(errors='ignore'))
+        status = _format_str(szSvcStat2.value.decode(errors='ignore'))
+        if name:
+            services.append([name, desc, type_, status])
 
-
-def GetHistInterp(tag_name, start_time, end_time, period,
-                  desc_as_label=False, label=None):
-    """
-    Retrieves data from eDNA history for a given tag. The data will be
-    linearly interpolated over the specified "period".
-
-    :param tag_name: fully-qualified (site.service.tag) eDNA tag
-    :param start_time: must be in format mm/dd/yy hh:mm:ss
-    :param end_time: must be in format mm/dd/yy hh:mm:ss
-    :param period: must be in format hh:mm:ss
-    :param desc_as_label: use the tag description as the column name instead
-        of the full tag
-    :param label: supply a custom label to use as the DataFrame column name
-    :return: a pandas DataFrame with timestamp, value, and status
-
-    Example:
-
-    >>> df = GetHistInterp("Site.Service.Tag", "01/01/17 01:01:01", \
-                           "01/02/17 01:01:01", "00:00:01")
-
-    """
-    # Check if the point even exists
-    if not DoesIDExist(tag_name):
-        warnings.warn("WARNING- " + tag_name + " does not exist or " +
-                      "connection was dropped. Try again if tag does exist.")
-        return pd.DataFrame()
-
-    # Define all required variables in the correct ctypes format
-    szPoint = c_char_p(tag_name.encode('utf-8'))
-    szStart = c_char_p(start_time.encode('utf-8'))
-    szEnd = c_char_p(end_time.encode('utf-8'))
-    szPeriod = c_char_p(period.encode('utf-8'))
-    pulKey = c_ulong(0)
-
-    # Initialize the data pull using the specified pulKey, which is an
-    # identifier that tells eDNA which data pull is occurring
-    nRet = dna_dll.DnaGetHistInterp(szPoint, szStart, szEnd, szPeriod,
-                                    byref(pulKey))
-    # The internal function _GetNextHist iterates over the initialized pull
-    df = _GetNextHist(pulKey, nRet, tag_name)
-    if df.empty:
-        warnings.warn('WARNING- No data retrieved for ' + tag_name + '. ' +
-                      'Check eDNA connection, ensure that the start time is ' +
-                      'not later than the end time, verify that the ' +
-                      'DateTime formatting matches eDNA requirements, and ' +
-                      'check that data exists in the query time period.')
-
-    # Check if the user would rather use the description as the column name
-    if desc_as_label or label:
-        if label:
-            new_label = label
-        else:
-            new_label = _GetLabel(tag_name)
-        df.rename(inplace=True, columns={tag_name: new_label,
-                tag_name + " Status": new_label + " Status"})
-    return df
-
-
-def GetHistMax(tag_name, start_time, end_time, period,
-               desc_as_label=False, label=None):
-    """
-    Retrieves data from eDNA history for a given tag. The maximum of the data
-    will be found over the specified "period".
-
-    :param tag_name: fully-qualified (site.service.tag) eDNA tag
-    :param start_time: must be in format mm/dd/yy hh:mm:ss
-    :param end_time: must be in format mm/dd/yy hh:mm:ss
-    :param period: must be in format hh:mm:ss
-    :param desc_as_label: use the tag description as the column name instead
-        of the full tag
-    :param label: supply a custom label to use as the DataFrame column name
-    :return: a pandas DataFrame with timestamp, value, and status
-
-    Example:
-
-    >>> df = GetHistMax("Site.Service.Tag", "01/01/17 01:01:01", \
-                        "01/02/17 01:01:01", "00:00:01")
-
-    """
-    # Check if the point even exists
-    if not DoesIDExist(tag_name):
-        warnings.warn("WARNING- " + tag_name + " does not exist or " +
-                      "connection was dropped. Try again if tag does exist.")
-        return pd.DataFrame()
-
-    # Define all required variables in the correct ctypes format
-    szPoint = c_char_p(tag_name.encode('utf-8'))
-    szStart = c_char_p(start_time.encode('utf-8'))
-    szEnd = c_char_p(end_time.encode('utf-8'))
-    szPeriod = c_char_p(period.encode('utf-8'))
-    pulKey = c_ulong(0)
-
-    # Initialize the data pull using the specified pulKey, which is an
-    # identifier that tells eDNA which data pull is occurring
-    nRet = dna_dll.DnaGetHistMax(szPoint, szStart, szEnd, szPeriod,
-                                 byref(pulKey))
-    # The internal function _GetNextHist iterates over the initialized pull
-    df = _GetNextHist(pulKey, nRet, tag_name)
-    if df.empty:
-        warnings.warn('WARNING- No data retrieved for ' + tag_name + '. ' +
-                      'Check eDNA connection, ensure that the start time is ' +
-                      'not later than the end time, verify that the ' +
-                      'DateTime formatting matches eDNA requirements, and ' +
-                      'check that data exists in the query time period.')
-
-    # Check if the user would rather use the description as the column name
-    if desc_as_label or label:
-        if label:
-            new_label = label
-        else:
-            new_label = _GetLabel(tag_name)
-        df.rename(inplace=True, columns={tag_name: new_label,
-                tag_name + " Status": new_label + " Status"})
-    return df
-
-
-def GetHistMin(tag_name, start_time, end_time, period,
-               desc_as_label=False, label=None):
-    """
-    Retrieves data from eDNA history for a given tag. The minimum of the data
-    will be found over the specified "period".
-
-    :param tag_name: fully-qualified (site.service.tag) eDNA tag
-    :param start_time: must be in format mm/dd/yy hh:mm:ss
-    :param end_time: must be in format mm/dd/yy hh:mm:ss
-    :param period: must be in format hh:mm:ss
-    :param desc_as_label: use the tag description as the column name instead
-        of the full tag
-    :param label: supply a custom label to use as the DataFrame column name
-    :return: a pandas DataFrame with timestamp, value, and status
-
-    Example:
-
-    >>> df = GetHistMin("Site.Service.Tag", "01/01/17 01:01:01", \
-                        "01/02/17 01:01:01", "00:00:01")
-
-    """
-    # Check if the point even exists
-    if not DoesIDExist(tag_name):
-        warnings.warn("WARNING- " + tag_name + " does not exist or " +
-                      "connection was dropped. Try again if tag does exist.")
-        return pd.DataFrame()
-
-    # Define all required variables in the correct ctypes format
-    szPoint = c_char_p(tag_name.encode('utf-8'))
-    szStart = c_char_p(start_time.encode('utf-8'))
-    szEnd = c_char_p(end_time.encode('utf-8'))
-    szPeriod = c_char_p(period.encode('utf-8'))
-    pulKey = c_ulong(0)
-
-    # Initialize the data pull using the specified pulKey, which is an
-    # identifier that tells eDNA which data pull is occurring
-    nRet = dna_dll.DnaGetHistMin(szPoint, szStart, szEnd, szPeriod,
-                                 byref(pulKey))
-    # The internal function _GetNextHist iterates over the initialized pull
-    df = _GetNextHist(pulKey, nRet, tag_name)
-    if df.empty:
-        warnings.warn('WARNING- No data retrieved for ' + tag_name + '. ' +
-                      'Check eDNA connection, ensure that the start time is ' +
-                      'not later than the end time, verify that the ' +
-                      'DateTime formatting matches eDNA requirements, and ' +
-                      'check that data exists in the query time period.')
-
-    # Check if the user would rather use the description as the column name
-    if desc_as_label or label:
-        if label:
-            new_label = label
-        else:
-            new_label = _GetLabel(tag_name)
-        df.rename(inplace=True, columns={tag_name: new_label,
-                tag_name + " Status": new_label + " Status"})
-    return df
-
-
-def GetMultipleTags(tag_list, start_time, end_time, sampling_rate=None,
-                    fill_limit=99999, verify_time=False, desc_as_label=False):
-    """
-    Retrieves raw data from eDNA history for multiple tags, merging them into
-    a single DataFrame, and resampling the data according to the specified
-    sampling_rate.
-
-    :param tag_list: a list of fully-qualified (site.service.tag) eDNA tags
-    :param start_time: must be in format mm/dd/yy hh:mm:ss
-    :param end_time: must be in format mm/dd/yy hh:mm:ss
-    :param sampling_rate: in units of seconds
-    :param fill_limit: in units of data points
-    :param verify_time: verify that the time is not before or after the query
-    :param desc_as_label: use the tag description as the column name instead
-        of the full tag
-    :return: a pandas DataFrame with timestamp and values
-    """
-    # Since we are pulling data from multiple tags, let's iterate over each
-    # one. For this case, we only want to pull data using the "raw" method,
-    # which will obtain all data as it is actually stored in the historian.
-    dfs = []
-    columns_names = []
-    for tag in tag_list:
-        df = GetHistRaw(tag, start_time, end_time)
-        if not df.empty:
-            # Sometimes a duplicate index/value pair is retrieved from
-            # eDNA, which will cause the concat to fail if not removed
-            df.drop_duplicates(inplace=True)
-            # If the user wants to use descriptions as labels, we need to
-            # ensure that only unique labels are used
-            label = tag
-            if desc_as_label:
-                orig_label = _GetLabel(tag)
-                label = orig_label
-                rename_number = 2
-                while label in columns_names:
-                    label = orig_label + str(rename_number)
-                    rename_number += 1
-                columns_names.append(label)
-                df.rename(columns={tag: label}, inplace=True)
-            # Add the DataFrame to the list, to be concatenated later
-            dfs.append(pd.DataFrame(df[label]))
-
-    # Next, we concatenate all the DataFrames using an outer join (default).
-    # Verify integrity is slow, but it ensures that the concatenation
-    # worked correctly.
-    if dfs:
-        merged_df = pd.concat(dfs, axis=1, verify_integrity=True)
-        merged_df = merged_df.fillna(method="ffill", limit=fill_limit)
+    # If no results were returned, raise a warning
+    df = pd.DataFrame()
+    if services:
+        df = pd.DataFrame(services, columns=["Name", "Description", "Type",
+                                             "Status"])
     else:
-        warnings.warn('WARNING- No data retrieved for any tags. ' +
-                      'Check eDNA connection, ensure that the start time is ' +
-                      'not later than the end time, verify that the ' +
-                      'DateTime formatting matches eDNA requirements, and ' +
-                      'check that data exists in the query time period.')
-        return pd.DataFrame()
-
-    # eDNA sometimes pulls data too early or too far- let's filter out all
-    # the data that is not within our original criteria.
-    if verify_time:
-        start_np = pd.to_datetime(start_time)
-        end_np = pd.to_datetime(end_time)
-        mask = (merged_df.index > start_np) & (merged_df.index <= end_np)
-        merged_df = merged_df.loc[mask]
-
-    # Finally, we resample the data at the rate requested by the user.
-    if sampling_rate:
-        sampling_string = str(sampling_rate) + "S"
-        merged_df = merged_df.resample(sampling_string).fillna(
-            method="ffill", limit=fill_limit)
-
-    return merged_df
+        warnings.warn("WARNING- No connected eDNA services detected. Check " +
+                      "your DNASys.ini file and your network connection.")
+    return df
 
 
-def GetHistRaw(tag_name, start_time, end_time, high_speed=False,
-               desc_as_label=False, label=None):
+def GetTagDescription(tag_name):
     """
-    Retrieves raw data from eDNA history for a given tag.
+    Gets the current description of a point configured in a real-time eDNA
+    service.
 
     :param tag_name: fully-qualified (site.service.tag) eDNA tag
-    :param start_time: must be in format mm/dd/yy hh:mm:ss
-    :param end_time: must be in format mm/dd/yy hh:mm:ss
-    :param high_speed: true = pull milliseconds
-    :param desc_as_label: use the tag description as the column name instead
-        of the full tag
-    :param label: supply a custom label to use as the DataFrame column name
-    :return: a pandas DataFrame with timestamp, value, and status
-
-    Example:
-
-    >>> df = GetHistRaw("Site.Service.Tag", "01/01/17 01:01:01", \
-                        "01/02/17 01:01:01")
-
+    :return: tag description
     """
     # Check if the point even exists
     if not DoesIDExist(tag_name):
         warnings.warn("WARNING- " + tag_name + " does not exist or " +
                       "connection was dropped. Try again if tag does exist.")
-        return pd.DataFrame()
+        return None
 
-    # Define all required variables in the correct ctypes format
-    szPoint = c_char_p(tag_name.encode('utf-8'))
-    szStart = c_char_p(start_time.encode('utf-8'))
-    szEnd = c_char_p(end_time.encode('utf-8'))
-    pulKey = c_ulong(0)
+    # To get the point information for the service, we need the Site.Service
+    split_tag = tag_name.split(".")
+    # If the full Site.Service.Tag was not supplied, return the tag_name
+    if len(split_tag) < 3:
+        warnings.warn("WARNING- Please supply the full Site.Service.Tag.")
+        return tag_name
+    # The Site.Service will be the first two split strings
+    site_service = split_tag[0] + "." + split_tag[1]
 
-    # Initialize the data pull using the specified pulKey, which is an
-    # identifier that tells eDNA which data pull is occurring
-    if high_speed:
-        nRet = dna_dll.DnaGetHSHistRaw(szPoint, szStart, szEnd, byref(pulKey))
+    # GetPoints will return a DataFrame with point information
+    points = GetPoints(site_service)
+    if tag_name in points.Tag.values:
+        description = points[points.Tag == tag_name].Description.values[0]
+        if description:
+            return description
+        else:
+            return tag_name
     else:
-        nRet = dna_dll.DnaGetHistRaw(szPoint, szStart, szEnd, byref(pulKey))
-    # The internal function _GetNextHist iterates over the initialized pull
-    df = _GetNextHist(pulKey, nRet, tag_name, high_speed)
-    if df.empty:
-        warnings.warn('WARNING- No data retrieved for ' + tag_name + '. ' +
-                      'Check eDNA connection, ensure that the start time is ' +
-                      'not later than the end time, verify that the ' +
-                      'DateTime formatting matches eDNA requirements, and ' +
-                      'check that data exists in the query time period.')
-
-    # Check if the user would rather use the description as the column name
-    if desc_as_label or label:
-        if label:
-            new_label = label
-        else:
-            new_label = _GetLabel(tag_name)
-        df.rename(inplace=True, columns={tag_name: new_label,
-                tag_name + " Status": new_label + " Status"})
-    return df
-
-
-def GetHistSnap(tag_name, start_time, end_time, period,
-                desc_as_label=False, label=None):
-    """
-    Retrieves data from eDNA history for a given tag. The data will be
-    snapped to the last known value over intervals of the specified "period".
-
-    :param tag_name: fully-qualified (site.service.tag) eDNA tag
-    :param start_time: must be in format mm/dd/yy hh:mm:ss
-    :param end_time: must be in format mm/dd/yy hh:mm:ss
-    :param period: must be in format hh:mm:ss
-    :param desc_as_label: use the tag description as the column name instead
-        of the full tag
-    :param label: supply a custom label to use as the DataFrame column name
-    :return: a pandas DataFrame with timestamp, value, and status
-
-    Example:
-
-    >>> df = GetHistSnap("Site.Service.Tag", "01/01/17 01:01:01", \
-                         "01/02/17 01:01:01", "00:00:01")
-
-    """
-    # Check if the point even exists
-    if not DoesIDExist(tag_name):
-        warnings.warn("WARNING- " + tag_name + " does not exist or " +
-                      "connection was dropped. Try again if tag does exist.")
-        return pd.DataFrame()
-
-    # Define all required variables in the correct ctypes format
-    szPoint = c_char_p(tag_name.encode('utf-8'))
-    szStart = c_char_p(start_time.encode('utf-8'))
-    szEnd = c_char_p(end_time.encode('utf-8'))
-    szPeriod = c_char_p(period.encode('utf-8'))
-    pulKey = c_ulong(0)
-    # Initialize the data pull using the specified pulKey, which is an
-    # identifier that tells eDNA which data pull is occurring
-    nRet = dna_dll.DnaGetHistSnap(szPoint, szStart, szEnd, szPeriod,
-                                  byref(pulKey))
-    # The internal function _GetNextHist iterates over the initialized pull
-    df = _GetNextHist(pulKey, nRet, tag_name)
-    if df.empty:
-        warnings.warn('WARNING- No data retrieved for ' + tag_name + '. ' +
-                      'Check eDNA connection, ensure that the start time is ' +
-                      'not later than the end time, verify that the ' +
-                      'DateTime formatting matches eDNA requirements, and ' +
-                      'check that data exists in the query time period.')
-
-    # Check if the user would rather use the description as the column name
-    if desc_as_label or label:
-        if label:
-            new_label = label
-        else:
-            new_label = _GetLabel(tag_name)
-        df.rename(inplace=True, columns={tag_name: new_label,
-                tag_name + " Status": new_label + " Status"})
-    return df
+        warnings.warn("WARNING- " + tag_name + " not found in service.")
+        return None
 
 
 def HistAppendValues(site_service, tag_name, times, values, statuses):
@@ -833,9 +696,22 @@ def SelectPoint():
     return tag_result
 
 
+def StringToUTCTime(time_string):
+    """
+    Turns a DateTime string into UTC time.
+
+    :param time_string: Must be the format "MM/dd/yy hh:mm:ss"
+    :return: an integer representing the UTC int format
+    """
+    szTime = c_char_p(time_string.encode('utf-8'))
+    res = dna_dll.StringToUTCTime(szTime)
+    return res
+
+
 # At the end of the module, we need to check that at least one eDNA service
 # is connected. Otherwise, there is a problem with the eDNA connection.
 service_array = GetServices()
+num_services = 0
 if not service_array.empty:
     num_services = str(len(service_array))
     print("Successfully connected to " + num_services + " eDNA services.")

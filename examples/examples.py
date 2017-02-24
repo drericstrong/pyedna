@@ -9,11 +9,11 @@ tag = "TESTSITE.TESTSERVICE.TESTPNT1"      # format site.service.tag
 start = "12/01/16 01:01:01"                 # format mm/dd/yy hh:mm:ss
 end = "01/03/17 01:01:01"                   # format mm/dd/yy hh:mm:ss
 period = "00:00:30"                         # format hh:mm:ss
-df = dna.GetHistSnap(tag, start, end, period)
+df = dna.GetHist(tag, start, end, period=period, mode="snap")
 
 # Raw data may be obtained from TESTPNT1 using:
 
-df = dna.GetHistRaw(tag, start, end)
+df2 = dna.GetHist(tag, start, end)
 
 # Other supported pull types include Average, Interpolated, Max, and Min. Please
 # refer to eDNA documentation for more description about these pull types.
@@ -21,8 +21,8 @@ df = dna.GetHistRaw(tag, start, end)
 # Multiple tags can be pulled (in Raw mode) at the same time using:
 
 tags = ["TESTSITE.TESTSERVICE.TESTPNT1", "TESTSITE.TESTSERVICE.TESTPNT2",
-          "TESTSITE.TESTSERVICE.TESTPNT3", "TESTSITE.TESTSERVICE.TESTPNT4"]
-df = dna.GetMultipleTags(tags, start, end)
+        "TESTSITE.TESTSERVICE.TESTPNT3", "TESTSITE.TESTSERVICE.TESTPNT4"]
+df3 = dna.GetMultipleTags(tags, start, end)
 
 # A list of connected services may be obtained using GetServices:
 

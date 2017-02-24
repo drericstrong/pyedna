@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
     pyedna.serv
-    ~~~~~~~~~~~~~~~
+    ~~~~~~~~~~~
     This module contains functions within the EzDnaServApi, mainly used for
     direct interaction with eDNA services, such as pushing data in real-time.
 
@@ -281,6 +281,7 @@ def FlushShortIdRecords(site_service):
 # At the end of the module, we need to check that at least one eDNA service
 # is connected. Otherwise, there is a problem with the eDNA connection.
 service_array = dna.GetServices()
+num_services = 0
 if not service_array.empty:
     num_services = str(len(service_array))
     print("Successfully connected to " + num_services + " eDNA services.")
