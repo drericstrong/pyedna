@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
     pyedna.serv
-    ~~~~~~~~~~~
+    ~~~~~~~~~~~~
     This module contains functions within the EzDnaServApi, mainly used for
     direct interaction with eDNA services, such as pushing data in real-time.
 
@@ -12,8 +12,25 @@
 import os
 import warnings
 import pyedna.ezdna as dna
+from unittest.mock import Mock
 from ctypes import cdll, byref, create_string_buffer
 from ctypes import c_char_p, c_double, c_short, c_ushort, c_long, c_int
+
+
+def _mock_edna():
+    # This function will mock all the methods that were used in the dna_dll.
+    # It's necessary so that documentation can be automatically created.
+    dnaserv_dll = Mock()
+    attrs = {'DnaAddAnalogShortIdRecord.return_value': 1,
+             'DnaAddAnalogShortIdRecordNoStatus.return_value': 1,
+             'DnaAddDigitalShortIdRecord.return_value': 1,
+             'DnaAddAnalogShortIdMsecRecord.return_value': 1,
+             'DnaAddAnalogShortIdMsecRecordNoStatus.return_value': 1,
+             'DnaAddDigitalShortIdMsecRecord.return_value': 1,
+             'DnaFlushShortIdRecords.return_value': 1}
+    dnaserv_dll.configure_mock(**attrs)
+    return dnaserv_dll
+
 
 # This code should execute at the beginning of the module import, because
 # all of the functions in this module require the dna_dll library to be
@@ -22,10 +39,12 @@ default_location = "C:\\Program Files (x86)\\eDNA\\EzDnaApi64.dll"
 if os.path.isfile(default_location):
     dnaserv_dll = cdll.LoadLibrary(default_location)
 else:
-    dnaserv_dll = None
     warnings.warn("ERROR- no eDNA dll detected at " +
                   "C:\\Program Files (x86)\\eDNA\\EzDnaApi64.dll" +
-                  " . Please manually load dll using the LoadDll function.")
+                  " . Please manually load dll using the LoadDll function. " +
+                  "Mocking dll, but all functions will fail until " +
+                  "dll is manually loaded...")
+    dnaserv_dll = _mock_edna()
 
 
 def LoadDll(location):

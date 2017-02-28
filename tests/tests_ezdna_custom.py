@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
     pyedna tests_ezdna_custom
-    ~~~~~~~~~~~~~~~
+    ~~~~~~~~~~~~~~~~~~~~~~~~~
     A set of unit tests for pyedna. Currently, these tests will only work
     on a private test server.
 

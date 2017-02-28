@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
     pyedna.calc_config
-    ~~~~~~~~~~~~~~~~~~
+    ~~~~~~~~~~~~~~~~~~~
     This module is meant to parse a calc config file from an eDNA service.
 
     :copyright: (c) 2017 Eric Strong.

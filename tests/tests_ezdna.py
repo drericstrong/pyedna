@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
     pyedna tests_ezdna
-    ~~~~~~~~~~~~~~~
+    ~~~~~~~~~~~~~~~~~~
     A set of unit tests for pyedna.
 
     :copyright: (c) 2017 Eric Strong.

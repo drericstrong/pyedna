@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
     pyedna.ezdna
-    ~~~~~~~~~~~~
+    ~~~~~~~~~~~~~
     This module contains "easy" versions of common functions from the eDNA
     C++ dll. Obtain a legal copy of the C++ eDNA dll for use.
 
@@ -19,8 +19,37 @@ import numba
 import warnings
 import numpy as np
 import pandas as pd
+from unittest.mock import Mock
 from ctypes import cdll, byref, create_string_buffer
 from ctypes import c_char_p, c_double, c_ushort, c_long, c_ulong
+
+
+def _mock_edna():
+    # This function will mock all the methods that were used in the dna_dll.
+    # It's necessary so that documentation can be automatically created.
+    dna_dll = Mock()
+    attrs = {'DnaGetHistAvgUTC.return_value': c_ulong(1),
+             'DnaGetHistInterpUTC.return_value': c_ulong(1),
+             'DnaGetHistMinUTC.return_value': c_ulong(1),
+             'DnaGetHistMaxUTC.return_value': c_ulong(1),
+             'DnaGetHistSnapUTC.return_value': c_ulong(1),
+             'DnaGetHistRawUTC.return_value': c_ulong(1),
+             'DoesIdExist.return_value': c_ulong(1),
+             'DnaGetHSHistRawUTC.return_value': c_ulong(1),
+             'DnaGetNextHSHistUTC.return_value': c_ulong(1),
+             'DnaGetPointEntry.return_value': c_ulong(1),
+             'DnaGetNextPointEntry.return_value': c_ulong(1),
+             'DNAGetRTFull.return_value': c_ulong(1),
+             'DnaSelectPoint.return_value': c_ulong(1),
+             'StringToUTCTime.return_value': 1,
+             'DnaGetServiceEntry.return_value': c_ulong(1),
+             'DnaGetNextServiceEntry.return_value': c_ulong(1),
+             'DnaHistAppendValues.return_value': c_ulong(1),
+             'DnaHistUpdateInsertValues.return_value': c_ulong(1),
+             'DnaCancelHistRequest.return_value': None,
+             'DnaGetNextHistSmallUTC.return_value': c_ulong(1)}
+    dna_dll.configure_mock(**attrs)
+    return dna_dll
 
 # This code should execute at the beginning of the module import, because
 # all of the functions in this module require the dna_dll library to be
@@ -29,10 +58,12 @@ default_location = "C:\\Program Files (x86)\\eDNA\\EzDnaApi64.dll"
 if os.path.isfile(default_location):
     dna_dll = cdll.LoadLibrary(default_location)
 else:
-    dna_dll = None
     warnings.warn("ERROR- no eDNA dll detected at " +
                   "C:\\Program Files (x86)\\eDNA\\EzDnaApi64.dll" +
-                  " . Please manually load dll using the LoadDll function.")
+                  " . Please manually load dll using the LoadDll function. " +
+                  "Mocking dll, but all functions will fail until " +
+                  "dll is manually loaded...")
+    dna_dll = _mock_edna()
 
 
 # If the EzDnaApi file is not in the default location, the user must explicitly
@@ -90,7 +121,7 @@ def GetHistAvg(tag_name, start_time, end_time, period,
     :param tag_name: fully-qualified (site.service.tag) eDNA tag
     :param start_time: must be in format mm/dd/yy hh:mm:ss
     :param end_time: must be in format mm/dd/yy hh:mm:ss
-    :param period: must be in format hh:mm:ss
+    :param period: in units of seconds (e.g. 10)
     :param desc_as_label: use the tag description as the column name instead
         of the full tag
     :param label: supply a custom label to use as the DataFrame column name
@@ -108,7 +139,7 @@ def GetHistInterp(tag_name, start_time, end_time, period,
     :param tag_name: fully-qualified (site.service.tag) eDNA tag
     :param start_time: must be in format mm/dd/yy hh:mm:ss
     :param end_time: must be in format mm/dd/yy hh:mm:ss
-    :param period: must be in format hh:mm:ss
+    :param period: in units of seconds (e.g. 10)
     :param desc_as_label: use the tag description as the column name instead
         of the full tag
     :param label: supply a custom label to use as the DataFrame column name
@@ -127,7 +158,7 @@ def GetHistMax(tag_name, start_time, end_time, period,
     :param tag_name: fully-qualified (site.service.tag) eDNA tag
     :param start_time: must be in format mm/dd/yy hh:mm:ss
     :param end_time: must be in format mm/dd/yy hh:mm:ss
-    :param period: must be in format hh:mm:ss
+    :param period: in units of seconds (e.g. 10)
     :param desc_as_label: use the tag description as the column name instead
         of the full tag
     :param label: supply a custom label to use as the DataFrame column name
@@ -146,7 +177,7 @@ def GetHistMin(tag_name, start_time, end_time, period,
     :param tag_name: fully-qualified (site.service.tag) eDNA tag
     :param start_time: must be in format mm/dd/yy hh:mm:ss
     :param end_time: must be in format mm/dd/yy hh:mm:ss
-    :param period: must be in format hh:mm:ss
+    :param period: in units of seconds (e.g. 10)
     :param desc_as_label: use the tag description as the column name instead
         of the full tag
     :param label: supply a custom label to use as the DataFrame column name
@@ -183,7 +214,7 @@ def GetHistSnap(tag_name, start_time, end_time, period,
     :param tag_name: fully-qualified (site.service.tag) eDNA tag
     :param start_time: must be in format mm/dd/yy hh:mm:ss
     :param end_time: must be in format mm/dd/yy hh:mm:ss
-    :param period: must be in format hh:mm:ss
+    :param period: in units of seconds (e.g. 10)
     :param desc_as_label: use the tag description as the column name instead
         of the full tag
     :param label: supply a custom label to use as the DataFrame column name
@@ -228,15 +259,15 @@ def GetHist(tag_name, start_time, end_time, period=5, mode="raw",
     # identifier that tells eDNA which data pull is occurring
     mode = mode.lower().strip()
     if not high_speed:
-        if mode is "avg":
+        if mode == "avg":
             nRet = dna_dll.DnaGetHistAvgUTC(szPoint, tStart, tEnd, tPeriod, byref(pulKey))
-        if mode is "interp":
+        if mode == "interp":
             nRet = dna_dll.DnaGetHistInterpUTC(szPoint, tStart, tEnd, tPeriod, byref(pulKey))
-        if mode is "min":
+        if mode == "min":
             nRet = dna_dll.DnaGetHistMinUTC(szPoint, tStart, tEnd, tPeriod, byref(pulKey))
-        if mode is "max":
+        if mode == "max":
             nRet = dna_dll.DnaGetHistMaxUTC(szPoint, tStart, tEnd, tPeriod, byref(pulKey))
-        if mode is "snap":
+        if mode == "snap":
             nRet = dna_dll.DnaGetHistSnapUTC(szPoint, tStart, tEnd, tPeriod, byref(pulKey))
         else:
             nRet = dna_dll.DnaGetHistRawUTC(szPoint, tStart, tEnd, byref(pulKey))
@@ -362,6 +393,7 @@ def GetMultipleTags(tag_list, start_time, end_time, sampling_rate=None,
             # Sometimes a duplicate index/value pair is retrieved from
             # eDNA, which will cause the concat to fail if not removed
             df.drop_duplicates(inplace=True)
+            df = df[~df.index.duplicated(keep='first')]
             # If the user wants to use descriptions as labels, we need to
             # ensure that only unique labels are used
             label = tag
@@ -470,11 +502,6 @@ def GetRTFull(tag_name):
 
     :param tag_name: fully-qualified (site.service.tag) eDNA tag
     :return: tuple of: alue, time, status, statusint, description, units
-
-    Example:
-
-    >>> tag_tuple = GetRTFull("Site.Service.Tag")
-
     """
     # Check if the point even exists
     if not DoesIDExist(tag_name):
@@ -681,11 +708,6 @@ def SelectPoint():
     Opens an eDNA point picker, where the user can select a single tag.
 
     :return: selected tag name
-
-    Example:
-
-    >>> tag = SelectPoint()
-
     """
     # Define all required variables in the correct ctypes format
     pszPoint = create_string_buffer(20)
