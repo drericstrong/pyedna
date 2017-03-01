@@ -322,11 +322,12 @@ def _GetNextHistSmallUTC(pulKey, nRet):
 
     # Once nRet is not zero, the function was terminated, either due to an
     # error or due to the end of the data period.
+    nRet = dna_dll.DnaGetNextHistSmallUTC(pulKey, refVal, refTime, refStat)
     while nRet == 0:
-        nRet = dna_dll.DnaGetNextHistSmallUTC(pulKey, refVal, refTime, refStat)
         val = np.append(val, pdValue.value)
         time_ = np.append(time_, ptTime.value)
         stat = np.append(stat, pusStatus.value)
+        nRet = dna_dll.DnaGetNextHistSmallUTC(pulKey, refVal, refTime, refStat)
     return time_, val, stat
 
 
@@ -344,12 +345,14 @@ def _GetNextHSHistUTC(pulKey, nRet):
 
     # Once nRet is not zero, the function was terminated, either due to an
     # error or due to the end of the data period.
+    nRet = dna_dll.DnaGetNextHSHistUTC(pulKey, refVal, refTime, refMillis,
+                                       refStatus, nStatus)
     while nRet == 0:
+        val = np.append(val, pdValue.value)
+        time_ = np.append(time_, ptTime.value * 1000 + pnMillis.value)
+        stat = np.append(stat, 3)
         nRet = dna_dll.DnaGetNextHSHistUTC(pulKey, refVal, refTime, refMillis,
                                            refStatus, nStatus)
-        val = np.append(val, pdValue.value)
-        time_ = np.append(time_, ptTime.value*1000 + pnMillis.value)
-        stat = np.append(stat, 3)
     return time_, val, stat
 
 

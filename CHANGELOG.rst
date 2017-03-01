@@ -35,3 +35,7 @@ Version 0.17
 - Bugfix in GetHist related to "switch" statement
 - Minor documentation fixes
 - Mocking the dna_dll variable so that RTD documentation can be automatically created
+
+Version 0.171
+-------------
+- Fixed minor issue with a duplicated last point in every data pull
