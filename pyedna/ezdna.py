@@ -442,6 +442,18 @@ def GetMultipleTags(tag_list, start_time, end_time, sampling_rate=None,
     return merged_df
 
 
+def _FormatPoints(szPoint, pdValue, szTime, szStatus, szDesc, szUnits):
+    # Returns an array of properly-formatted points from the GetPoints function
+    tag = _format_str(szPoint.value.decode(errors='ignore'))
+    value = pdValue.value
+    time_ = _format_str(szTime.value.decode(errors='ignore'))
+    status = _format_str(szStatus.value.decode(errors='ignore'))
+    desc = _format_str(szDesc.value.decode(errors='ignore'))
+    units = _format_str(szUnits.value.decode(errors='ignore'))
+    if szPoint.value.strip():
+        return [tag, value, time_, status, desc, units]
+
+
 def GetPoints(edna_service):
     """
     Obtains all the points in the edna_service, including real-time values.
@@ -463,28 +475,26 @@ def GetPoints(edna_service):
     nDesc, nUnits = c_ushort(90), c_ushort(20)
 
     # Call the eDNA function. nRet is zero if the function is successful.
+    points = []
     nRet = dna_dll.DnaGetPointEntry(szServiceName, nStarting, byref(pulKey),
         byref(szPoint), nPoint, byref(pdValue), byref(szTime), nTime,
         byref(szStatus), nStatus, byref(szDesc), nDesc, byref(szUnits), nUnits)
+    tag = _FormatPoints(szPoint, pdValue, szTime, szStatus, szDesc, szUnits)
+    if tag:
+        points.append(tag)
 
     # Iterate across all the returned services
-    points = []
     while nRet == 0:
-        nRet = dna_dll.DnaGetNextPointEntry(pulKey,
-            byref(szPoint2), nPoint, byref(pdValue2), byref(szTime2), nTime,
-            byref(szStatus2), nStatus, byref(szDesc2), nDesc,
-            byref(szUnits2), nUnits)
+        nRet = dna_dll.DnaGetNextPointEntry(pulKey, byref(szPoint2), nPoint,
+            byref(pdValue2), byref(szTime2), nTime, byref(szStatus2), nStatus,
+            byref(szDesc2), nDesc, byref(szUnits2), nUnits)
         # We want to ensure only UTF-8 characters are returned. Ignoring
         # characters is slightly unsafe, but they should only occur in the
         # units or description, so it's not a huge issue.
-        tag = _format_str(szPoint2.value.decode(errors='ignore'))
-        value = pdValue.value
-        time_ = _format_str(szTime2.value.decode(errors='ignore'))
-        status = _format_str(szStatus2.value.decode(errors='ignore'))
-        desc = _format_str(szDesc2.value.decode(errors='ignore'))
-        units = _format_str(szUnits2.value.decode(errors='ignore'))
-        if szPoint2.value.strip():
-            points.append([tag, value, time_, status, desc, units])
+        tag = _FormatPoints(szPoint2, pdValue2, szTime2, szStatus2, szDesc2,
+                            szUnits2)
+        if tag:
+            points.append(tag)
 
     # If no results were returned, raise a warning
     df = pd.DataFrame()
@@ -535,6 +545,15 @@ def GetRTFull(tag_name):
         warnings.warn("WARNING- eDNA API failed with code " + str(nRet))
         return None
 
+def _FormatServices(szSvcName, szSvcDesc, szSvcType, szSvcStat):
+    # Returns an array of properly-formatted services from the
+    # GetServices function
+    name = _format_str(szSvcName.value.decode(errors='ignore'))
+    desc = _format_str(szSvcDesc.value.decode(errors='ignore'))
+    type_ = _format_str(szSvcType.value.decode(errors='ignore'))
+    status = _format_str(szSvcStat.value.decode(errors='ignore'))
+    if name:
+        return [name, desc, type_, status]
 
 def GetServices():
     """
@@ -555,12 +574,15 @@ def GetServices():
     nSvcType, nSvcStat = c_ushort(30), c_ushort(30)
 
     # Call the eDNA function. nRet is zero if the function is successful.
+    services = []
     nRet = dna_dll.DnaGetServiceEntry(szType, szStartSvcName, byref(pulKey),
         byref(szSvcName), nSvcName, byref(szSvcDesc), nSvcDesc,
         byref(szSvcType), nSvcType, byref(szSvcStat), nSvcStat)
+    serv = _FormatServices(szSvcName, szSvcDesc, szSvcType, szSvcStat)
+    if serv:
+        services.append(serv)
 
     # Iterate across all the returned services
-    services = []
     while nRet == 0:
         nRet = dna_dll.DnaGetNextServiceEntry(pulKey,
             byref(szSvcName2), nSvcName, byref(szSvcDesc2), nSvcDesc,
@@ -568,12 +590,9 @@ def GetServices():
         # We want to ensure only UTF-8 characters are returned. Ignoring
         # characters is slightly unsafe, but they should only occur in the
         # units or description, so it's not a huge issue.
-        name = _format_str(szSvcName2.value.decode(errors='ignore'))
-        desc = _format_str(szSvcDesc2.value.decode(errors='ignore'))
-        type_ = _format_str(szSvcType2.value.decode(errors='ignore'))
-        status = _format_str(szSvcStat2.value.decode(errors='ignore'))
-        if name:
-            services.append([name, desc, type_, status])
+        serv = _FormatServices(szSvcName2, szSvcDesc2, szSvcType2, szSvcStat2)
+        if serv:
+            services.append(serv)
 
     # If no results were returned, raise a warning
     df = pd.DataFrame()

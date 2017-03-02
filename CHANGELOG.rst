@@ -38,4 +38,8 @@ Version 0.17
 
 Version 0.171
 -------------
-- Fixed minor issue with a duplicated last point in every data pull
+- Bugfix- minor issue with a duplicated last point in every data pull
+
+Version 0.172
+-------------
+- Bugfix where GetPoints and GetServices did not return the first entry (due to eDNA apparently treating these functions in a completely different way than the GetHist functions)

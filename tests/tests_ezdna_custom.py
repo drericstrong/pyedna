@@ -24,11 +24,29 @@ class TestServicePointMethods(unittest.TestCase):
         self.assertEqual(df.Description.values[0], "Calculation Service")
         self.assertEqual(df.Type.values[0], "SSERVER")
 
+    def test_getServices_firstSecondPoint(self):
+        services = dna.GetServices()
+        first_serv = services.Name[0]
+        good_serv = "ANTARES.ANVCALC"
+        self.assertEqual(first_serv, good_serv)
+        second_serv = services.Name[1]
+        good_serv2 = "ANTARES.ANVDD"
+        self.assertEqual(second_serv, good_serv2)
+
     def test_getPoints_retrieval(self):
         points = dna.GetPoints("MDSSCSC1.ANVCALC")
         df = points[points.Tag == "MDSSCSC1.ANVCALC.ADE1CA02"]
         self.assertEqual(df.Description.values[0], "ADE1 Percent Load")
         self.assertEqual(df.Units.values[0], "Load")
+
+    def test_getPoints_firstSecondPoint(self):
+        points = dna.GetPoints("MDSSCSC1.ANVCALC")
+        first_tag = points.Tag[0]
+        good_tag = "MDSSCSC1.ANVCALC._INPADDR"
+        self.assertEqual(first_tag, good_tag)
+        second_tag = points.Tag[1]
+        good_tag2 = "MDSSCSC1.ANVCALC.ADE1CA01"
+        self.assertEqual(second_tag, good_tag2)
 
     def test_getRTFull_exists(self):
         info = dna.GetRTFull("MDSSCSC1.ANVCALC.ADE1CA02")
