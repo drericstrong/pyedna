@@ -21,8 +21,7 @@ located in the following directory:
 
 C:\Program Files (x86)\eDNA\EzDnaApi64.dll
 
-Currently, only the 64-bit version of eDNA is supported. Help requested for 
-32-bit support.
+Currently, only the 64-bit version of eDNA is supported. Python 2 is not supported.
 
 **Required libraries**: numba, numpy, pandas
 
