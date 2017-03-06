@@ -43,3 +43,7 @@ Version 0.171
 Version 0.172
 -------------
 - Bugfix where GetPoints and GetServices did not return the first entry (due to eDNA apparently treating these functions in a completely different way than the GetHist functions)
+
+Version 0.173
+-------------
+- Fixed issue in GetMultipleTags where the pandas function drop_duplicates() removed too many rows. Removed duplicate indices only, instead.

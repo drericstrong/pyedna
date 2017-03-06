@@ -395,7 +395,7 @@ def GetMultipleTags(tag_list, start_time, end_time, sampling_rate=None,
         if not df.empty:
             # Sometimes a duplicate index/value pair is retrieved from
             # eDNA, which will cause the concat to fail if not removed
-            df.drop_duplicates(inplace=True)
+            # df.drop_duplicates(inplace=True)
             df = df[~df.index.duplicated(keep='first')]
             # If the user wants to use descriptions as labels, we need to
             # ensure that only unique labels are used
