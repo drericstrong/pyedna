@@ -1,8 +1,7 @@
 # PyeDNA
+![PyeDNA](https://github.com/drericstrong/pyedna/blob/master/images/pyedna_small.jpg)
 [![PyPI version](https://badge.fury.io/py/pyedna.svg)](https://badge.fury.io/py/pyedna)
 [![Documentation Status](https://readthedocs.org/projects/pyedna/badge/?version=latest)](http://pyedna.readthedocs.io/en/latest/?badge=latest)
-
-![PyeDNA](https://github.com/drericstrong/pyedna/blob/master/images/pyedna_small.jpg)
 
 PyeDNA ("pie-dee-en-ay") is a Python wrapper library for the C++ EzDnaApi,
 written for data scientists who wish to work with eDNA data in the context of a
