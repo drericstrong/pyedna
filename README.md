@@ -1,5 +1,6 @@
 # PyeDNA
 ![PyeDNA](https://github.com/drericstrong/pyedna/blob/master/images/pyedna_small.jpg)
+
 [![PyPI version](https://badge.fury.io/py/pyedna.svg)](https://badge.fury.io/py/pyedna)
 [![Documentation Status](https://readthedocs.org/projects/pyedna/badge/?version=latest)](http://pyedna.readthedocs.io/en/latest/?badge=latest)
 
@@ -16,20 +17,27 @@ who holds all rights to the eDNA software. PyeDNA does not contain any
 proprietary code, and is merely a wrapper for functions that must be obtained 
 from a legal, licensed version of EzDnaApi.dll.
 
-## Dependencies
+This is fan-supported project and is not affiliated in any way with InStepSoftware, LLC.
+The maintainer enjoys working with eDNA and wishes them the best. :)
+
+## Getting Started
 PyeDNA currently requires that a legal, licensed version of the EzDnaApi be 
 located in the following directory:
 
-C:\Program Files (x86)\eDNA\EzDnaApi64.dll
+**C:\Program Files (x86)\eDNA\EzDnaApi64.dll**
 
 Currently, only the 64-bit version of eDNA is supported. Python 2 is not supported.
 
 **Required libraries**: numba, numpy, pandas
 
+PyeDNA can be installed using pip:
+
+**pip install pyedna**
+
 ## Documentation
 Current documentation can be found [here](https://pyedna.readthedocs.io/en/latest/).
 
-## Examples
+## Basic Examples
 All of the core data pulling functions are located in the GetHist function, 
 which will return a pandas DataFrame with the timestamp, value, and status 
 columns. For example, the following code will pull snap data from TESTPNT1 

@@ -1,4 +1,7 @@
 numpy
+
 pandas
+
 numba
-llvmlite
+
+matplotlib

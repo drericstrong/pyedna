@@ -1,0 +1,299 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>3. Configuration Information &mdash; PyeDNA 0.173 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="genindex.html"/>
+        <link rel="search" title="Search" href="search.html"/>
+    <link rel="top" title="PyeDNA 0.173 documentation" href="index.html"/>
+        <link rel="next" title="4. Pulling Data" href="pullingdata.html"/>
+        <link rel="prev" title="2. Getting Started" href="gettingstarted.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> PyeDNA
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.173
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="introduction.html">1. Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gettingstarted.html">2. Getting Started</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">3. Configuration Information</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#service-information">Service Information</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#tag-information">Tag Information</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#tag-picker">Tag Picker</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="pullingdata.html">4. Pulling Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pushingdata.html">5. Pushing Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="changelog.html">2. Change Log</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">PyeDNA</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>3. Configuration Information</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/configurationinfo.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="configuration-information">
+<h1>3. Configuration Information<a class="headerlink" href="#configuration-information" title="Permalink to this headline">¶</a></h1>
+<p>PyeDNA contains a number of functions which allow the user to pull configuration
+information from current eDNA services and points. These functions are located in
+the pyedna.ezdna namespace.</p>
+<p><strong>Warning</strong>- One of the most common mistakes when using PyeDNA is not to specify the
+full eDNA tag when using the module. Unless otherwise specified, tags should always
+be specified by their full Site.Service.Tag designation.</p>
+<p>All code in this section assumes that PyeDNA has been imported using:</p>
+<p><strong>import pyedna.ezdna as dna</strong></p>
+<div class="section" id="service-information">
+<h2>Service Information<a class="headerlink" href="#service-information" title="Permalink to this headline">¶</a></h2>
+<p>eDNA contains a number of services, which each contain many tags. When PyeDNA is
+imported, it attempts to connect to all available services and will print the
+number of available eDNA services.</p>
+<p>A list of all connection services can be obtained using:</p>
+<p><strong>dna.GetServices()</strong></p>
+<p>The above function will return a pandas DataFrame with the following columns:</p>
+<ul class="simple">
+<li>Name</li>
+<li>Description</li>
+<li>Type</li>
+<li>Status</li>
+</ul>
+</div>
+<div class="section" id="tag-information">
+<h2>Tag Information<a class="headerlink" href="#tag-information" title="Permalink to this headline">¶</a></h2>
+<p>Each service contains a number of tags, which define a block of time-based data
+storage. Connecting to a service allows access to all of its tags, which can be
+found using the following command:</p>
+<p><strong>dna.GetPoints(&#8220;EDNA_SERVICE&#8221;)</strong></p>
+<p>The above function will return a pandas DataFrame with all the points from the
+eDNA service, also including information such as:</p>
+<ul class="simple">
+<li>Tag</li>
+<li>Current Value</li>
+<li>Current Time</li>
+<li>Current Status</li>
+<li>Description</li>
+<li>Units</li>
+</ul>
+<p>More specific information about a single point can be obtained using:</p>
+<p><strong>dna.GetRTFull(&#8220;SITE.SERVICE.TAG&#8221;)</strong></p>
+<p>The tag description alone can be found by:</p>
+<p><strong>dna.GetTagDescription(&#8220;SITE.SERVICE.TAG&#8221;)</strong></p>
+<p>Determining if a tag exists in any connected service can be accomplished by:</p>
+<p><strong>dna.DoesIDExist(&#8220;SITE.SERVICE.TAG&#8221;)</strong></p>
+<p>The above function will return either TRUE or FALSE. Ensure that proper spelling
+and the full Site.Service.Tag format is used.</p>
+</div>
+<div class="section" id="tag-picker">
+<h2>Tag Picker<a class="headerlink" href="#tag-picker" title="Permalink to this headline">¶</a></h2>
+<p>A dialog box containing the native eDNA &#8220;tag picker&#8221; can be brought up using:</p>
+<p><strong>dna.SelectPoint()</strong></p>
+<p>Unfortunately, only the single point version is supported at this time. Support
+for multiple tags is expected to be available in the future.</p>
+</div>
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="pullingdata.html" class="btn btn-neutral float-right" title="4. Pulling Data" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="gettingstarted.html" class="btn btn-neutral" title="2. Getting Started" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017, Eric Strong.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'0.173',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

@@ -8,9 +8,11 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>pyedna package &mdash; PyeDNA 0.16 documentation</title>
+  <title>pyedna package &mdash; PyeDNA 0.173 documentation</title>
   
 
+  
+  
   
   
 
@@ -30,7 +32,10 @@
   
 
   
-    <link rel="top" title="PyeDNA 0.16 documentation" href="../index.html"/> 
+        <link rel="index" title="Index"
+              href="../genindex.html"/>
+        <link rel="search" title="Search" href="../search.html"/>
+    <link rel="top" title="PyeDNA 0.173 documentation" href="../index.html"/> 
 
   
   <script src="../_static/js/modernizr.min.js"></script>
@@ -39,6 +44,7 @@
 
 <body class="wy-body-for-nav" role="document">
 
+   
   <div class="wy-grid-for-nav">
 
     
@@ -58,7 +64,7 @@
             
             
               <div class="version">
-                0.16
+                0.173
               </div>
             
           
@@ -79,11 +85,16 @@
           
             
             
-                <ul>
-<li class="toctree-l1"><a class="reference internal" href="../readme.html">PyeDNA</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../changelog.html">Version 0.14</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../changelog.html#version-0-15">Version 0.15</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../changelog.html#version-0-16">Version 0.16</a></li>
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../introduction.html">1. Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../gettingstarted.html">2. Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../configurationinfo.html">3. Configuration Information</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../pullingdata.html">4. Pulling Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../pushingdata.html">5. Pushing Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../changelog.html">2. Change Log</a></li>
 </ul>
 
             
@@ -96,8 +107,10 @@
 
       
       <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
-        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-        <a href="../index.html">PyeDNA</a>
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">PyeDNA</a>
+        
       </nav>
 
 
@@ -110,19 +123,36 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
 <div role="navigation" aria-label="breadcrumbs navigation">
+
   <ul class="wy-breadcrumbs">
-    <li><a href="../index.html">Docs</a> &raquo;</li>
-      
-    <li>pyedna package</li>
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+      <li>pyedna package</li>
+    
+    
       <li class="wy-breadcrumbs-aside">
         
-          
-            <a href="../_sources/source/pyedna.txt" rel="nofollow"> View page source</a>
+            
+            <a href="../_sources/source/pyedna.rst.txt" rel="nofollow"> View page source</a>
           
         
       </li>
+    
   </ul>
+
+  
   <hr/>
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
@@ -239,7 +269,7 @@ in any of the connected services.</p>
 </tbody>
 </table>
 <p>Example:</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">DoesIDExist</span><span class="p">(</span><span class="s2">&quot;Site.Service.Tag&quot;</span><span class="p">)</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">DoesIDExist</span><span class="p">(</span><span class="s2">&quot;Site.Service.Tag&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -287,7 +317,7 @@ averaged over the specified &#8220;period&#8221;.</p>
 <li><strong>tag_name</strong> &#8211; fully-qualified (site.service.tag) eDNA tag</li>
 <li><strong>start_time</strong> &#8211; must be in format mm/dd/yy hh:mm:ss</li>
 <li><strong>end_time</strong> &#8211; must be in format mm/dd/yy hh:mm:ss</li>
-<li><strong>period</strong> &#8211; must be in format hh:mm:ss</li>
+<li><strong>period</strong> &#8211; in units of seconds (e.g. 10)</li>
 <li><strong>desc_as_label</strong> &#8211; use the tag description as the column name instead
 of the full tag</li>
 <li><strong>label</strong> &#8211; supply a custom label to use as the DataFrame column name</li>
@@ -314,7 +344,7 @@ linearly interpolated over the specified &#8220;period&#8221;.</p>
 <li><strong>tag_name</strong> &#8211; fully-qualified (site.service.tag) eDNA tag</li>
 <li><strong>start_time</strong> &#8211; must be in format mm/dd/yy hh:mm:ss</li>
 <li><strong>end_time</strong> &#8211; must be in format mm/dd/yy hh:mm:ss</li>
-<li><strong>period</strong> &#8211; must be in format hh:mm:ss</li>
+<li><strong>period</strong> &#8211; in units of seconds (e.g. 10)</li>
 <li><strong>desc_as_label</strong> &#8211; use the tag description as the column name instead
 of the full tag</li>
 <li><strong>label</strong> &#8211; supply a custom label to use as the DataFrame column name</li>
@@ -341,7 +371,7 @@ will be found over the specified &#8220;period&#8221;.</p>
 <li><strong>tag_name</strong> &#8211; fully-qualified (site.service.tag) eDNA tag</li>
 <li><strong>start_time</strong> &#8211; must be in format mm/dd/yy hh:mm:ss</li>
 <li><strong>end_time</strong> &#8211; must be in format mm/dd/yy hh:mm:ss</li>
-<li><strong>period</strong> &#8211; must be in format hh:mm:ss</li>
+<li><strong>period</strong> &#8211; in units of seconds (e.g. 10)</li>
 <li><strong>desc_as_label</strong> &#8211; use the tag description as the column name instead
 of the full tag</li>
 <li><strong>label</strong> &#8211; supply a custom label to use as the DataFrame column name</li>
@@ -368,7 +398,7 @@ will be found over the specified &#8220;period&#8221;.</p>
 <li><strong>tag_name</strong> &#8211; fully-qualified (site.service.tag) eDNA tag</li>
 <li><strong>start_time</strong> &#8211; must be in format mm/dd/yy hh:mm:ss</li>
 <li><strong>end_time</strong> &#8211; must be in format mm/dd/yy hh:mm:ss</li>
-<li><strong>period</strong> &#8211; must be in format hh:mm:ss</li>
+<li><strong>period</strong> &#8211; in units of seconds (e.g. 10)</li>
 <li><strong>desc_as_label</strong> &#8211; use the tag description as the column name instead
 of the full tag</li>
 <li><strong>label</strong> &#8211; supply a custom label to use as the DataFrame column name</li>
@@ -421,7 +451,7 @@ snapped to the last known value over intervals of the specified &#8220;period&#8
 <li><strong>tag_name</strong> &#8211; fully-qualified (site.service.tag) eDNA tag</li>
 <li><strong>start_time</strong> &#8211; must be in format mm/dd/yy hh:mm:ss</li>
 <li><strong>end_time</strong> &#8211; must be in format mm/dd/yy hh:mm:ss</li>
-<li><strong>period</strong> &#8211; must be in format hh:mm:ss</li>
+<li><strong>period</strong> &#8211; in units of seconds (e.g. 10)</li>
 <li><strong>desc_as_label</strong> &#8211; use the tag description as the column name instead
 of the full tag</li>
 <li><strong>label</strong> &#8211; supply a custom label to use as the DataFrame column name</li>
@@ -497,10 +527,6 @@ and units.</p>
 </tr>
 </tbody>
 </table>
-<p>Example:</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">tag_tuple</span> <span class="o">=</span> <span class="n">GetRTFull</span><span class="p">(</span><span class="s2">&quot;Site.Service.Tag&quot;</span><span class="p">)</span>
-</pre></div>
-</div>
 </dd></dl>
 
 <dl class="function">
@@ -628,10 +654,6 @@ the correct location of the file, before this module can be used.</p>
 </tr>
 </tbody>
 </table>
-<p>Example:</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">tag</span> <span class="o">=</span> <span class="n">SelectPoint</span><span class="p">()</span>
-</pre></div>
-</div>
 </dd></dl>
 
 <dl class="function">
@@ -910,6 +932,9 @@ the correct location of the file, before this module can be used.</p>
 
 
            </div>
+           <div class="articleComments">
+            
+           </div>
           </div>
           <footer>
   
@@ -940,10 +965,11 @@ the correct location of the file, before this module can be used.</p>
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../',
-            VERSION:'0.16',
+            VERSION:'0.173',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
-            HAS_SOURCE:  true
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
         };
     </script>
       <script type="text/javascript" src="../_static/jquery.js"></script>

@@ -8,9 +8,11 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>PyeDNA &mdash; PyeDNA 0.16 documentation</title>
+  <title>1. Introduction &mdash; PyeDNA 0.173 documentation</title>
   
 
+  
+  
   
   
 
@@ -30,8 +32,11 @@
   
 
   
-    <link rel="top" title="PyeDNA 0.16 documentation" href="index.html"/>
-        <link rel="next" title="Version 0.14" href="changelog.html"/>
+        <link rel="index" title="Index"
+              href="genindex.html"/>
+        <link rel="search" title="Search" href="search.html"/>
+    <link rel="top" title="PyeDNA 0.173 documentation" href="index.html"/>
+        <link rel="next" title="2. Getting Started" href="gettingstarted.html"/>
         <link rel="prev" title="PyeDNA" href="index.html"/> 
 
   
@@ -41,6 +46,7 @@
 
 <body class="wy-body-for-nav" role="document">
 
+   
   <div class="wy-grid-for-nav">
 
     
@@ -60,7 +66,7 @@
             
             
               <div class="version">
-                0.16
+                0.173
               </div>
             
           
@@ -81,16 +87,21 @@
           
             
             
-                <ul class="current">
-<li class="toctree-l1 current"><a class="current reference internal" href="">PyeDNA</a><ul>
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">1. Introduction</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#disclaimer">Disclaimer</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#dependencies">Dependencies</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#examples">Examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#package-organization">Package Organization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#basic-examples">Basic Examples</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="changelog.html">Version 0.14</a></li>
-<li class="toctree-l1"><a class="reference internal" href="changelog.html#version-0-15">Version 0.15</a></li>
-<li class="toctree-l1"><a class="reference internal" href="changelog.html#version-0-16">Version 0.16</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gettingstarted.html">2. Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="configurationinfo.html">3. Configuration Information</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pullingdata.html">4. Pulling Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pushingdata.html">5. Pushing Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="changelog.html">2. Change Log</a></li>
 </ul>
 
             
@@ -103,8 +114,10 @@
 
       
       <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
-        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-        <a href="index.html">PyeDNA</a>
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">PyeDNA</a>
+        
       </nav>
 
 
@@ -117,26 +130,43 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
 <div role="navigation" aria-label="breadcrumbs navigation">
+
   <ul class="wy-breadcrumbs">
-    <li><a href="index.html">Docs</a> &raquo;</li>
-      
-    <li>PyeDNA</li>
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>1. Introduction</li>
+    
+    
       <li class="wy-breadcrumbs-aside">
         
-          
-            <a href="_sources/readme.txt" rel="nofollow"> View page source</a>
+            
+            <a href="_sources/introduction.rst.txt" rel="nofollow"> View page source</a>
           
         
       </li>
+    
   </ul>
+
+  
   <hr/>
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="pyedna">
-<h1>PyeDNA<a class="headerlink" href="#pyedna" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="introduction">
+<h1>1. Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h1>
 <p>PyeDNA (&#8220;pie-dee-en-ay&#8221;) is a Python wrapper library for the C++ EzDnaApi,
 written for data scientists who wish to work with eDNA data in the context of a
 pandas DataFrame. By converting eDNA data into a DataFrame, data analysis can
@@ -149,16 +179,31 @@ is developed by InStepSoftware, LLC (<a class="reference external" href="http://
 who holds all rights to the eDNA software. PyeDNA does not contain any
 proprietary code, and is merely a wrapper for functions that must be obtained
 from a legal, licensed version of EzDnaApi.dll.</p>
+<p>This is fan-supported project and is not affiliated in any way with InStepSoftware, LLC.
+The maintainer enjoys working with eDNA and wishes them the best. :)</p>
 </div>
-<div class="section" id="dependencies">
-<h2>Dependencies<a class="headerlink" href="#dependencies" title="Permalink to this headline">¶</a></h2>
-<p>PyeDNA currently requires that a legal, licensed version of the EzDnaApi be
-located in the following directory:</p>
-<p>C:Program Files (x86)eDNAEzDnaApi64.dll</p>
-<p>Required libraries: numba, numpy, pandas</p>
+<div class="section" id="package-organization">
+<h2>Package Organization<a class="headerlink" href="#package-organization" title="Permalink to this headline">¶</a></h2>
+<p>PyeDNA is organized into several namespaces, including:</p>
+<ul class="simple">
+<li>calc_config</li>
+<li>ezdna</li>
+<li>serv</li>
+</ul>
+<p>The namespace of most interest to the typical user will be the <em>ezdna</em> namespace,
+which contains methods that are meant to translate the eDNA API to Pythonic syntax
+and common libraries, such as pandas. For instance, all the data pulling and
+configuration information functions are in this namespace.</p>
+<p>The other two namespaces, calc_config and serv, contain more specialized functions.
+Serv contains functions from the EzDNAServAPI that are meant to push data into eDNA.
+These functions are not entirely converted to familiar syntax, behaving in a more
+low-level fashion. Calc_config is a namespace meant for parsing a CM.DB file (a sqlite
+database), which each eDNA service contains. Calculations defined in eDNA may be
+difficult to parse, and this class is meant to determine which tags are located in which
+calculations, to determine a dependency structure.</p>
 </div>
-<div class="section" id="examples">
-<h2>Examples<a class="headerlink" href="#examples" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="basic-examples">
+<h2>Basic Examples<a class="headerlink" href="#basic-examples" title="Permalink to this headline">¶</a></h2>
 <p>All of the core data pulling functions are located in the GetHist function,
 which will return a pandas DataFrame with the timestamp, value, and status
 columns. For example, the following code will pull snap data from TESTPNT1
@@ -185,15 +230,18 @@ refer to eDNA documentation for more description about these pull types.</p>
 
 
            </div>
+           <div class="articleComments">
+            
+           </div>
           </div>
           <footer>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="changelog.html" class="btn btn-neutral float-right" title="Version 0.14" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="gettingstarted.html" class="btn btn-neutral float-right" title="2. Getting Started" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="index.html" class="btn btn-neutral" title="PyeDNA" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="index.html" class="btn btn-neutral" title="PyeDNA" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
@@ -224,10 +272,11 @@ refer to eDNA documentation for more description about these pull types.</p>
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
-            VERSION:'0.16',
+            VERSION:'0.173',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
-            HAS_SOURCE:  true
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
         };
     </script>
       <script type="text/javascript" src="_static/jquery.js"></script>
