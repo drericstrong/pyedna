@@ -1,5 +1,5 @@
 ===============
- 2. Change Log
+ Change Log
 ===============
 
 Version 0.14
