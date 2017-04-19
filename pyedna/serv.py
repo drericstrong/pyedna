@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
     pyedna.serv
-    ~~~~~~~~~~~~
+    -------------
     This module contains functions within the EzDnaServApi, mainly used for
     direct interaction with eDNA services, such as pushing data in real-time.
 

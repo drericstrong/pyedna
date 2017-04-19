@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>pyedna package &mdash; PyeDNA 0.173 documentation</title>
+  <title>pyedna package &mdash; PyeDNA 0.18 documentation</title>
   
 
   
@@ -35,7 +35,7 @@
         <link rel="index" title="Index"
               href="../genindex.html"/>
         <link rel="search" title="Search" href="../search.html"/>
-    <link rel="top" title="PyeDNA 0.173 documentation" href="../index.html"/> 
+    <link rel="top" title="PyeDNA 0.18 documentation" href="../index.html"/> 
 
   
   <script src="../_static/js/modernizr.min.js"></script>
@@ -64,7 +64,7 @@
             
             
               <div class="version">
-                0.173
+                0.18
               </div>
             
           
@@ -94,7 +94,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../configurationinfo.html">3. Configuration Information</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../pullingdata.html">4. Pulling Data</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../pushingdata.html">5. Pushing Data</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../changelog.html">2. Change Log</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../changelog.html">Change Log</a></li>
 </ul>
 
             
@@ -467,7 +467,7 @@ of the full tag</li>
 
 <dl class="function">
 <dt id="pyedna.ezdna.GetMultipleTags">
-<code class="descclassname">pyedna.ezdna.</code><code class="descname">GetMultipleTags</code><span class="sig-paren">(</span><em>tag_list</em>, <em>start_time</em>, <em>end_time</em>, <em>sampling_rate=None</em>, <em>fill_limit=99999</em>, <em>verify_time=False</em>, <em>desc_as_label=False</em><span class="sig-paren">)</span><a class="headerlink" href="#pyedna.ezdna.GetMultipleTags" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">pyedna.ezdna.</code><code class="descname">GetMultipleTags</code><span class="sig-paren">(</span><em>tag_list</em>, <em>start_time</em>, <em>end_time</em>, <em>sampling_rate=None</em>, <em>fill_limit=99999</em>, <em>verify_time=False</em>, <em>desc_as_label=False</em>, <em>utc=False</em><span class="sig-paren">)</span><a class="headerlink" href="#pyedna.ezdna.GetMultipleTags" title="Permalink to this definition">¶</a></dt>
 <dd><p>Retrieves raw data from eDNA history for multiple tags, merging them into
 a single DataFrame, and resampling the data according to the specified
 sampling_rate.</p>
@@ -484,6 +484,7 @@ sampling_rate.</p>
 <li><strong>verify_time</strong> &#8211; verify that the time is not before or after the query</li>
 <li><strong>desc_as_label</strong> &#8211; use the tag description as the column name instead
 of the full tag</li>
+<li><strong>utc</strong> &#8211; if True, use the integer time format instead of DateTime</li>
 </ul>
 </td>
 </tr>
@@ -965,7 +966,7 @@ the correct location of the file, before this module can be used.</p>
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../',
-            VERSION:'0.173',
+            VERSION:'0.18',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true,

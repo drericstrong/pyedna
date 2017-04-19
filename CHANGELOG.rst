@@ -47,3 +47,10 @@ Version 0.172
 Version 0.173
 -------------
 - Fixed issue in GetMultipleTags where the pandas function drop_duplicates() removed too many rows. Removed duplicate indices only, instead.
+
+Version 0.18
+-------------
+- Updated logo
+- New and improved documentation
+- Import function updated
+- Minor bugfixes

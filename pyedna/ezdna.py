@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
     pyedna.ezdna
-    ~~~~~~~~~~~~~
+    --------------
     This module contains "easy" versions of common functions from the eDNA
     C++ dll. Obtain a legal copy of the C++ eDNA dll for use.
 
@@ -9,7 +9,6 @@
     :license: Refer to LICENSE.txt for more information.
 """
 
-# TODO- Test data push
 # Note- all functions are in CamelCase to match the original eDNA function
 # names, even though this does not follow PEP 8.
 
@@ -369,7 +368,8 @@ def _GetLabel(tag_name):
 
 
 def GetMultipleTags(tag_list, start_time, end_time, sampling_rate=None,
-                    fill_limit=99999, verify_time=False, desc_as_label=False):
+                    fill_limit=99999, verify_time=False, desc_as_label=False,
+                    utc=False):
     """
     Retrieves raw data from eDNA history for multiple tags, merging them into
     a single DataFrame, and resampling the data according to the specified
@@ -383,6 +383,7 @@ def GetMultipleTags(tag_list, start_time, end_time, sampling_rate=None,
     :param verify_time: verify that the time is not before or after the query
     :param desc_as_label: use the tag description as the column name instead
         of the full tag
+    :param utc: if True, use the integer time format instead of DateTime
     :return: a pandas DataFrame with timestamp and values
     """
     # Since we are pulling data from multiple tags, let's iterate over each
@@ -391,7 +392,7 @@ def GetMultipleTags(tag_list, start_time, end_time, sampling_rate=None,
     dfs = []
     columns_names = []
     for tag in tag_list:
-        df = GetHist(tag, start_time, end_time)
+        df = GetHist(tag, start_time, end_time, utc=utc)
         if not df.empty:
             # Sometimes a duplicate index/value pair is retrieved from
             # eDNA, which will cause the concat to fail if not removed

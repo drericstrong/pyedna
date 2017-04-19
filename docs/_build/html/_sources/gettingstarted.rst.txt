@@ -27,7 +27,7 @@ located in the following directory:
 If your EzDNAApi is in a different location, each namespace contains a method
 called LoadDll which can be used to specify the correct location:
 
-**LoadDll("CORRECT_LOCATION")
+**LoadDll("CORRECT_LOCATION")**
 
 Python Requirements
 --------------------
