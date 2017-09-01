@@ -36,16 +36,10 @@ Version 0.17
 - Minor documentation fixes
 - Mocking the dna_dll variable so that RTD documentation can be automatically created
 
-Version 0.171
+Version 0.17
 -------------
 - Bugfix- minor issue with a duplicated last point in every data pull
-
-Version 0.172
--------------
 - Bugfix where GetPoints and GetServices did not return the first entry (due to eDNA apparently treating these functions in a completely different way than the GetHist functions)
-
-Version 0.173
--------------
 - Fixed issue in GetMultipleTags where the pandas function drop_duplicates() removed too many rows. Removed duplicate indices only, instead.
 
 Version 0.18
@@ -54,3 +48,8 @@ Version 0.18
 - New and improved documentation
 - Import function updated
 - Minor bugfixes
+
+Version 1.01
+-------------
+- Re-released using the 1.X scheme to fix versioning control (developer mistake)
+- No other major updates

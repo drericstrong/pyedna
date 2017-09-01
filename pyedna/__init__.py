@@ -8,7 +8,7 @@
     :license: Refer to LICENSE.txt for more information.
 """
 
-__version__ = '0.173'
+__version__ = '1.01'
 
 from .ezdna import *
 from .calc_config import *

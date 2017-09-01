@@ -3,7 +3,7 @@ from distutils.core import setup
 setup(
   name='pyedna',
   packages=['pyedna'],
-  version='0.18',
+  version='1.01',
   description='Python wrapper library for the C++ EzDnaApi',
   author='Eric Strong',
   author_email='dr.eric.strong@gmail.com',
