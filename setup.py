@@ -8,7 +8,7 @@ setup(
   author='Eric Strong',
   author_email='dr.eric.strong@gmail.com',
   url='https://github.com/drericstrong/pyedna',
-  download_url='https://github.com/drericstrong/pyedna/tarball/0.18',
+  download_url='https://github.com/drericstrong/pyedna/tarball/1.01',
   keywords=['eDNA', 'data'],
   classifiers=[],
 )
